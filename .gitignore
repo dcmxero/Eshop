@@ -1,0 +1,15 @@
+.vs/ 
+.vscode/ 
+.idea/ 
+*.user 
+*.suo 
+*.userprefs 
+[Dd]ebug/ 
+[Dd]ebugPublic/ 
+[Dd]Release/ 
+[Dd]ReleasePublic/ 
+x64/ 
+x86/ 
+[Aa]rm/ 
+[Aa]rm64/ 
+Archive/ 
