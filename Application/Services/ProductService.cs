@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Mappers;
 using Domain.Models;
+using Infrastructure.Exceptions;
 using Infrastructure.Repositories;
 
 namespace Application.Services
@@ -12,6 +13,12 @@ namespace Application.Services
         public async Task<List<ProductDto>> GetAllProductsAsync()
         {
             List<Product> products = await productRepository.GetAllProductsAsync();
+            return [.. products.Select(ProductMapper.ToDto)];
+        }
+
+        public async Task<List<ProductDto>> GetAllActiveProductsAsync()
+        {
+            List<Product> products = await productRepository.GetAllActiveProductsAsync();
             return [.. products.Select(ProductMapper.ToDto)];
         }
 
@@ -29,16 +36,17 @@ namespace Application.Services
 
         public async Task<bool> UpdateProductDescriptionAsync(UpdateProductDto productDto)
         {
-            Product product = await productRepository.GetByIdAsync(productDto.Id);
-            if (product == null)
-            {
-                return false;
-            }
+            Product product = await productRepository.GetByIdAsync(productDto.Id) ?? throw new ProductNotFoundException();
 
             product.Description = productDto.Description;
 
             await productRepository.UpdateAsync(product);
             return true;
+        }
+
+        public async Task SetIsActiveAsync(int productId, bool isActive)
+        {
+            await productRepository.SetIsActiveAsync(productId, isActive);
         }
     }
 }

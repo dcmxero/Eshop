@@ -14,5 +14,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Product>()
             .Property(p => p.Price)
             .HasPrecision(18, 2); // Precision: 18 digits, Scale: 2 digits after the decimal
+        modelBuilder.Entity<Product>()
+               .Property(p => p.IsActive)
+               .HasDefaultValue(true); // Set the default value for IsActive
     }
 }
