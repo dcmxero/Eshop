@@ -84,6 +84,72 @@ public class ProductsControllerV1Tests
 
     #endregion
 
+    #region Get product by Id
+
+    /// <summary>
+    /// Verifies that getting a product by ID returns an OkObjectResult with the correct product data.
+    /// Tests that the controller responds correctly when the product is found in the service.
+    /// </summary>
+    [Fact]
+    public async Task GetProductById_ReturnsOkResult_WhenProductExists()
+    {
+        // Arrange: Prepare the product DTO to be returned by the mock service.
+        ProductDto productDto = new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1" };
+        mockProductService.Setup(service => service.GetProductByIdAsync(1)).ReturnsAsync(productDto);
+
+        // Act: Call the GetProductById method on the controller.
+        IActionResult result = await controller.GetProductByIdAsync(1);
+
+        // Assert: Verify that the response contains the expected product data.
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+        ProductDto returnValue = Assert.IsType<ProductDto>(okResult.Value);
+        Assert.Equal(productDto.Id, returnValue.Id);
+        Assert.Equal(productDto.Name, returnValue.Name);
+    }
+
+    /// <summary>
+    /// Verifies that getting a product by ID returns a NotFoundObjectResult when the product does not exist.
+    /// Tests that the controller responds correctly when the product is not found in the service.
+    /// </summary>
+    [Fact]
+    public async Task GetProductById_ReturnsNotFound_WhenProductDoesNotExist()
+    {
+        // Arrange: Setup the mock service to return null for a non-existing product.
+        mockProductService.Setup(service => service.GetProductByIdAsync(It.IsAny<int>())).ReturnsAsync((ProductDto)null);
+
+        // Act: Call the GetProductById method on the controller with a non-existing product ID.
+        IActionResult result = await controller.GetProductByIdAsync(9999);
+
+        // Assert: Ensure the result is a NotFoundObjectResult.
+        NotFoundObjectResult notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal("Product with ID 9999 not found.", notFoundResult.Value);
+    }
+
+    #endregion
+
+    #region Handle unexpected errors
+
+    /// <summary>
+    /// Verifies that getting a product by ID returns a StatusCode 500 when an unexpected error occurs.
+    /// Tests that the controller responds correctly when an exception is thrown in the service.
+    /// </summary>
+    [Fact]
+    public async Task GetProductById_ReturnsStatusCode500_WhenUnexpectedErrorOccurs()
+    {
+        // Arrange: Simulate an exception by making the mock service throw an error.
+        mockProductService.Setup(service => service.GetProductByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception("Unexpected error"));
+
+        // Act: Call the GetProductById method on the controller.
+        IActionResult result = await controller.GetProductByIdAsync(1);
+
+        // Assert: Verify the result is an ObjectResult with a StatusCode of 500 and the correct error message.
+        ObjectResult statusCodeResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(500, statusCodeResult.StatusCode);
+        Assert.Equal("An internal server error occurred.", statusCodeResult.Value);
+    }
+
+    #endregion
+
     #region Update product description
 
     /// <summary>

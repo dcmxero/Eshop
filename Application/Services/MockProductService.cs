@@ -24,6 +24,12 @@ public class MockProductService : IProductService
         return Task.FromResult(products.Where(p => p.IsActive).ToList());
     }
 
+    public Task<ProductDto?> GetProductByIdAsync(int id)
+    {
+        var product = products.FirstOrDefault(p => p.Id == id);
+        return Task.FromResult(product);
+    }
+
     public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
     {
         return Task.FromResult(products.Skip((page - 1) * pageSize).Take(pageSize).ToList());

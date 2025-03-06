@@ -20,6 +20,13 @@ public interface IProductService
     Task<List<ProductDto>> GetAllActiveProductsAsync();
 
     /// <summary>
+    /// Retrieves a product by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the product to retrieve.</param>
+    /// <returns>The product with the specified ID, or null if not found.</returns>
+    Task<ProductDto?> GetProductByIdAsync(int id);
+
+    /// <summary>
     /// Retrieves products from the service with pagination.
     /// </summary>
     /// <param name="page">The page number to retrieve.</param>

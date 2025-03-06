@@ -35,6 +35,35 @@ public class ProductsController(IProductService productService) : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get product by ID", Description = "Retrieves a product by its ID.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> GetProductByIdAsync(int id)
+    {
+        try
+        {
+            // Get the product by ID from the service
+            ProductDto? product = await productService.GetProductByIdAsync(id);
+
+            // If the product is not found, return a 404 Not Found status
+            if (product == null)
+            {
+                return NotFound($"Product with ID {id} not found.");
+            }
+
+            // Return the product with a 200 OK status
+            return Ok(product);
+        }
+        catch (Exception)
+        {
+            // Log the exception (optional) and return a 500 internal server error status
+            return StatusCode(500, $"An internal server error occurred.");
+        }
+    }
+
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Update a product description", Description = "Updates product description.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful update with message

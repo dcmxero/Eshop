@@ -22,6 +22,27 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
+    public async Task<ProductDto?> GetProductByIdAsync(int id)
+    {
+        try
+        {
+            Product product = await productRepository.GetByIdAsync(id);
+
+            if (product == null)
+            {
+                return null;
+            }
+
+            ProductDto productDto = product.ToDto();
+
+            return productDto;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while retrieving the product.", ex);
+        }
+    }
+
     public async Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
     {
         List<Product> products = await productRepository.GetProductsAsync(page, pageSize);

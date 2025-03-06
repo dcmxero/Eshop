@@ -3980,7 +3980,8 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "Domain": "1.0.0",
-          "Infrastructure": "1.0.0"
+          "Infrastructure": "1.0.0",
+          "Swashbuckle.AspNetCore.Annotations": "7.3.1"
         },
         "compile": {
           "bin/placeholder/Application.dll": {}
