@@ -22,17 +22,11 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task<ProductDto?> GetProductByIdAsync(int id)
+    public async Task<ProductDto> GetProductByIdAsync(int id)
     {
         try
         {
-            Product product = await productRepository.GetByIdAsync(id);
-
-            if (product == null)
-            {
-                return null;
-            }
-
+            Product product = await productRepository.GetByIdAsync(id) ?? throw new ProductNotFoundException();
             ProductDto productDto = product.ToDto();
 
             return productDto;

@@ -115,14 +115,14 @@ public class ProductsControllerV1Tests
     public async Task GetProductById_ReturnsNotFound_WhenProductDoesNotExist()
     {
         // Arrange: Setup the mock service to return null for a non-existing product.
-        mockProductService.Setup(service => service.GetProductByIdAsync(It.IsAny<int>())).ReturnsAsync((ProductDto)null);
+        mockProductService.Setup(service => service.GetProductByIdAsync(It.IsAny<int>())).ThrowsAsync(new ProductNotFoundException("Product not found."));
 
         // Act: Call the GetProductById method on the controller with a non-existing product ID.
         IActionResult result = await controller.GetProductByIdAsync(9999);
 
         // Assert: Ensure the result is a NotFoundObjectResult.
         NotFoundObjectResult notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Product with ID 9999 not found.", notFoundResult.Value);
+        Assert.Equal("Product not found.", notFoundResult.Value);
     }
 
     #endregion

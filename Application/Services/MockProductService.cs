@@ -1,6 +1,7 @@
 ﻿namespace Application.Services;
 
 using Application.DTOs;
+using Infrastructure.Exceptions;
 
 public class MockProductService : IProductService
 {
@@ -24,10 +25,10 @@ public class MockProductService : IProductService
         return Task.FromResult(products.Where(p => p.IsActive).ToList());
     }
 
-    public Task<ProductDto?> GetProductByIdAsync(int id)
+    public Task<ProductDto> GetProductByIdAsync(int id)
     {
-        var product = products.FirstOrDefault(p => p.Id == id);
-        return Task.FromResult(product);
+        ProductDto? product = products.FirstOrDefault(p => p.Id == id);
+        return product == null ? throw new ProductNotFoundException() : Task.FromResult(product);
     }
 
     public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)

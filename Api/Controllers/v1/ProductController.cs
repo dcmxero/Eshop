@@ -46,16 +46,14 @@ public class ProductsController(IProductService productService) : ControllerBase
         try
         {
             // Get the product by ID from the service
-            ProductDto? product = await productService.GetProductByIdAsync(id);
-
-            // If the product is not found, return a 404 Not Found status
-            if (product == null)
-            {
-                return NotFound($"Product with ID {id} not found.");
-            }
+            ProductDto product = await productService.GetProductByIdAsync(id);
 
             // Return the product with a 200 OK status
             return Ok(product);
+        }
+        catch (ProductNotFoundException)
+        {
+            return NotFound("Product not found.");
         }
         catch (Exception)
         {
