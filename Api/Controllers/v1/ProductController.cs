@@ -18,7 +18,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetProducts()
+    public async Task<IActionResult> GetProductsAsync()
     {
         List<ProductDto> products = await productService.GetAllProductsAsync();
         return Ok(products);
@@ -29,7 +29,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetActiveProducts()
+    public async Task<IActionResult> GetActiveProductsAsync()
     {
         List<ProductDto> products = await productService.GetAllActiveProductsAsync();
         return Ok(products);
@@ -69,7 +69,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful activation with message
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))] // For product not found
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))] // For internal server errors
-    public async Task<IActionResult> ActivateProduct(int productId)
+    public async Task<IActionResult> ActivateProductAsync(int productId)
     {
         try
         {
@@ -92,7 +92,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful deactivation with message
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))] // For product not found
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))] // For internal server errors
-    public async Task<IActionResult> DeactivateProduct(int productId)
+    public async Task<IActionResult> DeactivateProductAsync(int productId)
     {
         try
         {

@@ -3,13 +3,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Seeds;
 
+/// <summary>
+/// Provides a method for initializing product data in the database.
+/// </summary>
 public static class ProductSeed
 {
+    /// <summary>
+    /// Initializes the product data in the database if no products already exist.
+    /// </summary>
+    /// <param name="serviceProvider">The service provider used to get the application context.</param>
     public static void Initialize(IServiceProvider serviceProvider)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
         ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+        // If products already exist, no need to seed again
         if (context.Products.Any())
         {
             return;
@@ -58,5 +66,4 @@ public static class ProductSeed
         context.Products.AddRange(products);
         context.SaveChanges();
     }
-
 }

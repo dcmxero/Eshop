@@ -8,11 +8,20 @@ using Xunit;
 
 namespace WebApi.Tests;
 
+/// <summary>
+/// Unit tests for the ProductsControllerV1 class in the WebApi.Tests namespace.
+/// This class tests the functionality of various product-related actions within the ProductsController.
+/// It verifies that products are retrieved, updated, activated, and deactivated correctly, handling both success and failure cases.
+/// </summary>
 public class ProductsControllerV1Tests
 {
     private readonly Mock<IProductService> mockProductService;
     private readonly ProductsController controller;
 
+    /// <summary>
+    /// Initializes a new instance of the ProductsControllerV1Tests class.
+    /// Sets up a mocked product service and creates an instance of ProductsController for testing.
+    /// </summary>
     public ProductsControllerV1Tests()
     {
         mockProductService = new Mock<IProductService>();
@@ -21,10 +30,14 @@ public class ProductsControllerV1Tests
 
     #region Get products
 
+    /// <summary>
+    /// Verifies that the GetProducts action returns an OkObjectResult with a list of products.
+    /// Tests that the response contains the correct number of products and that the controller interacts with the service correctly.
+    /// </summary>
     [Fact]
     public async Task GetProducts_ReturnsOkResult_WithListOfProducts()
     {
-        // Arrange
+        // Arrange: Prepare a list of product DTOs to be returned by the mock service.
         List<ProductDto> products =
         [
             new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1" },
@@ -32,210 +45,249 @@ public class ProductsControllerV1Tests
         ];
         mockProductService.Setup(service => service.GetAllProductsAsync()).ReturnsAsync(products);
 
-        // Act
-        IActionResult result = await controller.GetProducts();
+        // Act: Call the GetProductsAsync method on the controller.
+        IActionResult result = await controller.GetProductsAsync();
 
-        // Assert
+        // Assert: Ensure the result is of type OkObjectResult and contains the expected number of products.
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
         List<ProductDto> returnValue = Assert.IsType<List<ProductDto>>(okResult.Value);
-        Assert.Equal(2, returnValue.Count);
+        Assert.Equal(2, returnValue.Count); // Assert that the correct number of products are returned
     }
 
+    /// <summary>
+    /// Verifies that the GetActiveProducts action filters and returns only active products.
+    /// The test ensures that only active products are included in the response.
+    /// </summary>
     [Fact]
-    public async Task GetActiveProductsV1_ReturnsOkResult_WithFilteredActiveProducts()
+    public async Task GetActiveProducts_ReturnsOkResult_WithFilteredActiveProducts()
     {
-        // Arrange
+        // Arrange: Prepare a list of active products to be returned by the mock service.
         List<ProductDto> activeProducts =
         [
             new() { Id = 1, Name = "Product 1", ImgUri = "active1.jpg", Price = 15.99M, Description = "Description 1" },
             new() { Id = 2, Name = "Product 2", ImgUri = "active2.jpg", Price = 25.99M, Description = "Description 2" }
         ];
 
-        // Mock service to return only the active products (assuming it's already filtered in the service layer)
+        // Mock service to return only the active products.
         mockProductService.Setup(service => service.GetAllActiveProductsAsync()).ReturnsAsync(activeProducts);
 
-        // Act
-        IActionResult result = await controller.GetActiveProducts();
+        // Act: Call the GetActiveProductsAsync method on the controller.
+        IActionResult result = await controller.GetActiveProductsAsync();
 
-        // Assert
+        // Assert: Verify that only the active products are returned.
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
         List<ProductDto> returnValue = Assert.IsType<List<ProductDto>>(okResult.Value);
-
-        // Ensure the result contains exactly the products expected (simulating only active products)
-        Assert.Equal(2, returnValue.Count); // We expect 2 active products in this case
-        Assert.Equal(activeProducts[0].Id, returnValue[0].Id);
-        Assert.Equal(activeProducts[1].Id, returnValue[1].Id);
+        Assert.Equal(2, returnValue.Count); // Ensure the correct number of active products is returned
+        Assert.Equal(activeProducts[0].Id, returnValue[0].Id); // Ensure the first active product matches
+        Assert.Equal(activeProducts[1].Id, returnValue[1].Id); // Ensure the second active product matches
     }
 
     #endregion
 
     #region Update product description
 
+    /// <summary>
+    /// Verifies that updating a product description returns an OkObjectResult indicating success.
+    /// Tests that the controller responds correctly when the update is successful.
+    /// </summary>
     [Fact]
-    public async Task UpdateProductDescription_ReturnsNoContent_WhenProductUpdatedSuccessfully()
+    public async Task UpdateProductDescription_ReturnsOkResult_WhenProductUpdatedSuccessfully()
     {
-        // Arrange
+        // Arrange: Prepare a request object with a new description and mock the service to update the product.
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = 1;
         mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description));
 
-        // Act
+        // Act: Call the UpdateProductDescriptionAsync method on the controller.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
 
-        // Assert
-        OkObjectResult notFoundResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal("Product description updated successfully.", notFoundResult.Value);
+        // Assert: Verify the result is OkObjectResult and contains a success message.
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("Product description updated successfully.", okResult.Value); // Assert that the success message is returned
     }
 
+    /// <summary>
+    /// Verifies that when a product ID is default, the controller returns a BadRequestObjectResult.
+    /// Ensures that the controller handles invalid input gracefully by returning a meaningful error message.
+    /// </summary>
     [Fact]
     public async Task UpdateProductDescription_ReturnsBadRequest_WhenProductIdIsDefault()
     {
-        // Arrange
+        // Arrange: Prepare a request with a new description and set the product ID to default.
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = default;
 
-        // Act
+        // Act: Call the UpdateProductDescriptionAsync method with the default product ID.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
 
-        // Assert
-        // Assert
-        BadRequestObjectResult notFoundResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Product ID must be provided.", notFoundResult.Value);
+        // Assert: Verify the result is a BadRequestObjectResult and contains an appropriate error message.
+        BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Product ID must be provided.", badRequestResult.Value); // Assert that the error message is returned
     }
 
+    /// <summary>
+    /// Verifies that when a product is not found, the controller returns a NotFoundObjectResult.
+    /// Tests that the controller properly handles the scenario where the product ID does not exist.
+    /// </summary>
     [Fact]
     public async Task UpdateProductDescription_ReturnsNotFound_WhenProductNotFound()
     {
-        // Arrange
+        // Arrange: Prepare a request and set the product ID to a valid value, but mock the service to throw ProductNotFoundException.
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = 1;
         mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description)).ThrowsAsync(new ProductNotFoundException());
 
-        // Act
+        // Act: Call the UpdateProductDescriptionAsync method with the ID of a nonexistent product.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
 
-        // Assert
-        // Assert
+        // Assert: Verify the result is a NotFoundObjectResult and contains a "Product not found" message.
         NotFoundObjectResult notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Product not found.", notFoundResult.Value);
+        Assert.Equal("Product not found.", notFoundResult.Value); // Assert the product not found message
     }
 
+    /// <summary>
+    /// Verifies that when an unexpected error occurs, the controller returns a StatusCode 500 with an error message.
+    /// This test ensures that the controller gracefully handles unexpected exceptions.
+    /// </summary>
     [Fact]
     public async Task UpdateProductDescription_ReturnsStatusCode500_WhenUnexpectedErrorOccurs()
     {
-        // Arrange
+        // Arrange: Prepare a request with a new description and mock the service to throw a general exception.
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = 1;
         mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description)).ThrowsAsync(new Exception());
 
-        // Act
+        // Act: Call the UpdateProductDescriptionAsync method while the service throws an exception.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
 
-        // Assert
+        // Assert: Verify the result is an ObjectResult with status code 500 and an error message.
         ObjectResult statusCodeResult = Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, statusCodeResult.StatusCode);
-        Assert.Equal("An internal server error occurred.", statusCodeResult.Value);
+        Assert.Equal(500, statusCodeResult.StatusCode); // Assert that the status code is 500
+        Assert.Equal("An internal server error occurred.", statusCodeResult.Value); // Assert the error message
     }
 
     #endregion
 
     #region Activate product
 
+    /// <summary>
+    /// Verifies that the ActivateProduct action returns an OkObjectResult when a product is successfully activated.
+    /// Tests that the controller responds correctly to a successful product activation request.
+    /// </summary>
     [Fact]
-    public async Task ActivateProduct_ReturnsNoContent_WhenProductActivatedSuccessfully()
+    public async Task ActivateProduct_ReturnsOkResult_WhenProductActivatedSuccessfully()
     {
-        // Arrange
+        // Arrange: Prepare product ID and mock the service to activate the product.
         int productId = 1;
         mockProductService.Setup(service => service.SetIsActiveAsync(productId, true));
 
-        // Act
-        IActionResult result = await controller.ActivateProduct(productId);
+        // Act: Call the ActivateProductAsync method on the controller.
+        IActionResult result = await controller.ActivateProductAsync(productId);
 
-        // Assert
-        OkObjectResult notFoundResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal("Product activated successfully.", notFoundResult.Value);
+        // Assert: Verify the result is OkObjectResult and contains a success message.
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("Product activated successfully.", okResult.Value); // Assert the activation success message
     }
 
+    /// <summary>
+    /// Verifies that when the product is not found during activation, the controller returns a NotFoundObjectResult.
+    /// Tests that the controller handles the scenario where the product cannot be found.
+    /// </summary>
     [Fact]
-    public async Task ActivateProduct_ReturnsBadRequest_WhenProductNotFound()
+    public async Task ActivateProduct_ReturnsNotFound_WhenProductNotFound()
     {
-        // Arrange
+        // Arrange: Set up mock to throw a ProductNotFoundException when the product ID is used.
         int productId = 1;
         mockProductService.Setup(service => service.SetIsActiveAsync(productId, true)).ThrowsAsync(new ProductNotFoundException());
 
-        // Act
-        IActionResult result = await controller.ActivateProduct(productId);
+        // Act: Call the ActivateProductAsync method with a nonexistent product.
+        IActionResult result = await controller.ActivateProductAsync(productId);
 
-        // Assert
+        // Assert: Verify the result is NotFoundObjectResult and contains an error message.
         NotFoundObjectResult notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Product not found.", notFoundResult.Value);
+        Assert.Equal("Product not found.", notFoundResult.Value); // Assert the "Product not found" message
     }
 
+    /// <summary>
+    /// Verifies that the ActivateProduct action returns a 500 status code when an unexpected error occurs.
+    /// Ensures the controller handles unexpected errors correctly by returning a generic error message.
+    /// </summary>
     [Fact]
     public async Task ActivateProduct_ReturnsStatusCode500_WhenUnexpectedErrorOccurs()
     {
-        // Arrange
+        // Arrange: Prepare the product ID and set up the mock service to throw an unexpected error.
         int productId = 1;
         mockProductService.Setup(service => service.SetIsActiveAsync(productId, true)).ThrowsAsync(new Exception());
 
-        // Act
-        IActionResult result = await controller.ActivateProduct(productId);
+        // Act: Call the ActivateProductAsync method on the controller.
+        IActionResult result = await controller.ActivateProductAsync(productId);
 
-        // Assert
+        // Assert: Verify the result is an ObjectResult with a 500 status code and an internal server error message.
         ObjectResult statusCodeResult = Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, statusCodeResult.StatusCode);
-        Assert.Equal("An internal server error occurred.", statusCodeResult.Value);
+        Assert.Equal(500, statusCodeResult.StatusCode); // Assert that the status code is 500
+        Assert.Equal("An internal server error occurred.", statusCodeResult.Value); // Assert the error message
     }
 
     #endregion
 
     #region Deactivate product
 
+    /// <summary>
+    /// Verifies that the DeactivateProduct action returns an OkObjectResult when a product is successfully deactivated.
+    /// Ensures the controller handles successful product deactivation correctly.
+    /// </summary>
     [Fact]
-    public async Task DeactivateProduct_ReturnsNoContent_WhenProductDeactivatedSuccessfully()
+    public async Task DeactivateProduct_ReturnsOkResult_WhenProductDeactivatedSuccessfully()
     {
-        // Arrange
+        // Arrange: Prepare the product ID and mock the service to deactivate the product.
         int productId = 1;
         mockProductService.Setup(service => service.SetIsActiveAsync(productId, false));
 
-        // Act
-        IActionResult result = await controller.DeactivateProduct(productId);
+        // Act: Call the DeactivateProductAsync method on the controller.
+        IActionResult result = await controller.DeactivateProductAsync(productId);
 
-        // Assert
-        OkObjectResult notFoundResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal("Product deactivated successfully.", notFoundResult.Value);
+        // Assert: Verify the result is OkObjectResult and contains the success message.
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("Product deactivated successfully.", okResult.Value); // Assert deactivation success
     }
 
+    /// <summary>
+    /// Verifies that when a product is not found during deactivation, the controller returns a NotFoundObjectResult.
+    /// Tests that the controller handles the scenario where the product cannot be found during deactivation.
+    /// </summary>
     [Fact]
-    public async Task DeactivateProduct_ReturnsBadRequest_WhenProductNotFound()
+    public async Task DeactivateProduct_ReturnsNotFound_WhenProductNotFound()
     {
-        // Arrange
+        // Arrange: Set up mock to throw a ProductNotFoundException when the product ID is used.
         int productId = 1;
         mockProductService.Setup(service => service.SetIsActiveAsync(productId, false)).ThrowsAsync(new ProductNotFoundException());
 
-        // Act
-        IActionResult result = await controller.DeactivateProduct(productId);
+        // Act: Call the DeactivateProductAsync method with a nonexistent product.
+        IActionResult result = await controller.DeactivateProductAsync(productId);
 
-        // Assert
-        // Assert
+        // Assert: Verify the result is NotFoundObjectResult and contains the error message.
         NotFoundObjectResult notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Product not found.", notFoundResult.Value);
+        Assert.Equal("Product not found.", notFoundResult.Value); // Assert the "Product not found" message
     }
 
+    /// <summary>
+    /// Verifies that the DeactivateProduct action returns a 500 status code when an unexpected error occurs.
+    /// Ensures the controller handles unexpected errors correctly by returning a generic error message.
+    /// </summary>
     [Fact]
     public async Task DeactivateProduct_ReturnsStatusCode500_WhenUnexpectedErrorOccurs()
     {
-        // Arrange
+        // Arrange: Prepare the product ID and set up the mock service to throw an unexpected error.
         int productId = 1;
         mockProductService.Setup(service => service.SetIsActiveAsync(productId, false)).ThrowsAsync(new Exception());
 
-        // Act
-        IActionResult result = await controller.DeactivateProduct(productId);
+        // Act: Call the DeactivateProductAsync method on the controller.
+        IActionResult result = await controller.DeactivateProductAsync(productId);
 
-        // Assert
+        // Assert: Verify the result is an ObjectResult with a 500 status code and an internal server error message.
         ObjectResult statusCodeResult = Assert.IsType<ObjectResult>(result);
-        Assert.Equal(500, statusCodeResult.StatusCode);
-        Assert.Equal("An internal server error occurred.", statusCodeResult.Value);
+        Assert.Equal(500, statusCodeResult.StatusCode); // Assert that the status code is 500
+        Assert.Equal("An internal server error occurred.", statusCodeResult.Value); // Assert the error message
     }
 
     #endregion

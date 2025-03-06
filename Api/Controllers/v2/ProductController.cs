@@ -23,7 +23,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetProductsAsync(int page = 1, int pageSize = 10)
     {
         if (page < 1 || pageSize < 1)
         {
@@ -45,7 +45,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetActiveProducts(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetActiveProductsAsync(int page = 1, int pageSize = 10)
     {
         if (page < 1 || pageSize < 1)
         {

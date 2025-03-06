@@ -10,17 +10,30 @@ using Xunit;
 
 namespace WebApi.Tests;
 
+/// <summary>
+/// Unit tests for the ProductsControllerV2 class in the WebApi.Tests namespace.
+/// Verifies functionality for retrieving products and active products from the ProductsController.
+/// </summary>
 public class ProductsControllerV2Tests
 {
     private readonly IProductService productService;
     private readonly ProductsController controller;
 
+    /// <summary>
+    /// Initializes a new instance of the ProductsControllerV2Tests class.
+    /// Creates an instance of the ProductsController using either a mock or actual product service based on configuration.
+    /// </summary>
     public ProductsControllerV2Tests()
     {
         productService = CreateProductService();
         controller = new ProductsController(productService);
     }
 
+    /// <summary>
+    /// Creates an instance of the IProductService based on the configuration from appsettings.json.
+    /// If UseMockProductService is true, a mock product service is used; otherwise, a real product service is created using the database.
+    /// </summary>
+    /// <returns>The product service to be used in the controller.</returns>
     private static IProductService CreateProductService()
     {
         // Load configuration from appsettings.json
@@ -59,6 +72,13 @@ public class ProductsControllerV2Tests
         }
     }
 
+    /// <summary>
+    /// Tests that the correct number of products is returned when page size is specified.
+    /// Verifies that only the expected number of products are included in the response and that the last product matches the expected name.
+    /// </summary>
+    /// <param name="page">The page number to retrieve.</param>
+    /// <param name="pageSize">The number of products per page.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     [Fact]
     public async Task GetProducts_ReturnsCorrectNumberOfProducts_WhenPageSizeIsSpecified()
     {
@@ -67,7 +87,7 @@ public class ProductsControllerV2Tests
         int pageSize = 5;
 
         // Act
-        IActionResult result = await controller.GetProducts(page, pageSize);
+        IActionResult result = await controller.GetProductsAsync(page, pageSize);
 
         // Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
@@ -76,7 +96,13 @@ public class ProductsControllerV2Tests
         Assert.Equal("Product 5", returnValue[^1].Name); // Ensure the last product returned matches
     }
 
-
+    /// <summary>
+    /// Tests that only active products are returned when the page size is specified.
+    /// Verifies that only active products are included in the response and that the correct number of active products is returned.
+    /// </summary>
+    /// <param name="page">The page number to retrieve.</param>
+    /// <param name="pageSize">The number of products per page.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     [Fact]
     public async Task GetActiveProducts_ReturnsOnlyActiveProducts_WhenPageSizeIsSpecified()
     {
@@ -85,7 +111,7 @@ public class ProductsControllerV2Tests
         int pageSize = 5;
 
         // Act
-        IActionResult result = await controller.GetActiveProducts(page, pageSize);
+        IActionResult result = await controller.GetActiveProductsAsync(page, pageSize);
 
         // Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
