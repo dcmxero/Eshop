@@ -3,21 +3,56 @@ using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace WebApi.Controllers.v2
-{
-    [ApiController]
-    [ApiVersion("2.0")]
-    [Route("api/v2/[controller]")]
-    public class ProductsController(IProductService productService) : ControllerBase
-    {
-        private readonly IProductService productService = productService;
+namespace WebApi.Controllers.v2;
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get products with pagination", Description = "Retrieves products with pagination.")]
-        public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 10)
+[ApiController]
+[ApiVersion("2.0")]
+[Route("api/v2/[controller]")]
+public class ProductsController(IProductService productService) : ControllerBase
+{
+    private readonly IProductService productService = productService;
+
+    /// <summary>
+    /// Retrieves products with pagination.
+    /// </summary>
+    /// <param name="page">The page number (must be 1 or greater).</param>
+    /// <param name="pageSize">The number of products per page (must be 1 or greater).</param>
+    /// <returns>A paged list of products.</returns>
+    [HttpGet("products")]
+    [SwaggerOperation(Summary = "Get products with pagination", Description = "Retrieves products with pagination.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 10)
+    {
+        if (page < 1 || pageSize < 1)
         {
-            List<ProductDto> pagedProducts = await productService.GetProductsAsync(page, pageSize);
-            return Ok(pagedProducts);
+            return BadRequest("Page number and page size must be 1 or greater.");
         }
+
+        List<ProductDto> pagedProducts = await productService.GetProductsAsync(page, pageSize);
+        return Ok(pagedProducts);
+    }
+
+    /// <summary>
+    /// Retrieves active products with pagination.
+    /// </summary>
+    /// <param name="page">The page number (must be 1 or greater).</param>
+    /// <param name="pageSize">The number of products per page (must be 1 or greater).</param>
+    /// <returns>A paged list of active products.</returns>
+    [HttpGet("active-products")]
+    [SwaggerOperation(Summary = "Get active products with pagination", Description = "Retrieves active products with pagination.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> GetActiveProducts(int page = 1, int pageSize = 10)
+    {
+        if (page < 1 || pageSize < 1)
+        {
+            return BadRequest("Page number and page size must be 1 or greater.");
+        }
+
+        List<ProductDto> pagedProducts = await productService.GetActiveProductsAsync(page, pageSize);
+        return Ok(pagedProducts);
     }
 }

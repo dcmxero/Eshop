@@ -1,14 +1,14 @@
 ﻿using Application.DTOs;
 
-namespace Application.Services
+namespace Application.Services;
+
+public interface IProductService
 {
-    public interface IProductService
-    {
-        Task<List<ProductDto>> GetAllProductsAsync();
-        Task<List<ProductDto>> GetAllActiveProductsAsync();
-        Task<List<ProductDto>> GetProductsAsync(int page, int pageSize);
-        Task<ProductDto> GetProductByIdAsync(int id);
-        Task<bool> UpdateProductDescriptionAsync(UpdateProductDto productDto);
-        Task SetIsActiveAsync(int productId, bool isActive);
-    }
+    Task<List<ProductDto>> GetAllProductsAsync();
+    Task<List<ProductDto>> GetAllActiveProductsAsync();
+    Task<List<ProductDto>> GetProductsAsync(int page, int pageSize);
+
+    Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize);
+    Task UpdateProductDescriptionAsync(int productId, string? description);
+    Task SetIsActiveAsync(int productId, bool isActive);
 }

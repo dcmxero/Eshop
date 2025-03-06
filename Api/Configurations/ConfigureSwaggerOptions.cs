@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace WebApi;
+namespace WebApi.Configurations;
 
 public class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) : IConfigureNamedOptions<SwaggerGenOptions>
 {
@@ -24,6 +24,8 @@ public class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) : 
             Version = "v2",
             Description = "API for managing products allowing getting products with pagination"
         });
+
+        options.EnableAnnotations();
     }
 
     public void Configure(string? name, SwaggerGenOptions options)

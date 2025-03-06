@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
-using WebApi;
+using WebApi.Configurations;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddControllers();
 
 // Register Product repository and service
@@ -65,6 +66,16 @@ if (app.Environment.IsDevelopment())
             options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
         }
     });
+}
+
+
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    IServiceProvider services = scope.ServiceProvider;
+    ApplicationDbContext context = services.GetRequiredService<ApplicationDbContext>();
+
+    // Apply any pending migrations automatically
+    context.Database.Migrate();
 }
 
 app.UseHttpsRedirection();

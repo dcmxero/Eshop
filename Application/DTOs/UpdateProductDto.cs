@@ -1,9 +1,6 @@
-﻿namespace Application.DTOs
-{
-    public class UpdateProductDto
-    {
-        public int Id { get; set; }
+﻿namespace Application.DTOs;
 
-        public string? Description { get; set; }
-    }
+public class UpdateProductDto
+{
+    public string? Description { get; set; }
 }

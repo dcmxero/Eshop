@@ -4,104 +4,109 @@ using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace WebApi.Controllers.v1
+namespace WebApi.Controllers.v1;
+
+[ApiController]
+[ApiVersion("1.0")]
+[Route("api/v1/[controller]")]
+public class ProductsController(IProductService productService) : ControllerBase
 {
-    [ApiController]
-    [ApiVersion("1.0")]
-    [Route("api/v1/[controller]")]
-    public class ProductsController(IProductService productService) : ControllerBase
+    private readonly IProductService productService = productService;
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get all products", Description = "Retrieves all products. Pagination is not supported in v1.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> GetProducts()
     {
-        private readonly IProductService productService = productService;
+        List<ProductDto> products = await productService.GetAllProductsAsync();
+        return Ok(products);
+    }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all products", Description = "Retrieves all products. Pagination is not supported in v1.")]
-        public async Task<IActionResult> GetProducts()
+    [HttpGet("active")]
+    [SwaggerOperation(Summary = "Get all active products", Description = "Retrieves all active products.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> GetActiveProducts()
+    {
+        List<ProductDto> products = await productService.GetAllActiveProductsAsync();
+        return Ok(products);
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update a product description", Description = "Updates product description.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful update with message
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))] // For bad request (e.g., invalid productId)
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))] // For product not found
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))] // For internal server errors
+    public async Task<IActionResult> UpdateProductDescriptionAsync(int id, [FromBody] UpdateProductDto request)
+    {
+        if (id == default)
         {
-            List<ProductDto> products = await productService.GetAllProductsAsync();
-            return Ok(products);
+            return BadRequest("Product ID must be provided.");
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all active products", Description = "Retrieves all active products.")]
-        public async Task<IActionResult> GetActiveProducts()
+        try
         {
-            List<ProductDto> products = await productService.GetAllActiveProductsAsync();
-            return Ok(products);
+            await productService.UpdateProductDescriptionAsync(id, request.Description);
+        }
+        catch (ProductNotFoundException)
+        {
+            return NotFound("Product not found.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An internal server error occurred.");
         }
 
-        [HttpPut()]
-        [SwaggerOperation(Summary = "Update a product description", Description = "Updates product description.")]
-        public async Task<IActionResult> UpdateProductDescriptionAsync(UpdateProductDto productDto)
+        return Ok("Product description updated successfully.");
+    }
+
+    [HttpPatch("{productId}/activate")]
+    [SwaggerOperation(Summary = "Activates a product", Description = "Sets the IsActive property of the product to true.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful activation with message
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))] // For product not found
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))] // For internal server errors
+    public async Task<IActionResult> ActivateProduct(int productId)
+    {
+        try
         {
-            if (productDto.Id == default)
-            {
-                return BadRequest("Product ID must be provided and cannot be the default value.");
-            }
-
-            try
-            {
-                await productService.UpdateProductDescriptionAsync(productDto);
-            }
-            catch (ProductNotFoundException)
-            {
-                return BadRequest("Product not found.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An internal server error occurred.");
-            }
-
-            return NoContent();
+            await productService.SetIsActiveAsync(productId, true);
+        }
+        catch (ProductNotFoundException)
+        {
+            return NotFound("Product not found.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An internal server error occurred.");
         }
 
-        /// <summary>
-        /// Activates a product (sets IsActive to true).
-        /// </summary>
-        /// <param name="productId">The ID of the product to activate.</param>
-        /// <returns>No Content if the product is activated successfully, otherwise a NotFound status.</returns>
-        [HttpPost("activate/{productId}")]
-        [SwaggerOperation(Summary = "Activates a product", Description = "Sets the IsActive property of the product to true.")]
-        public async Task<IActionResult> ActivateProduct(int productId)
-        {
-            try
-            {
-                await productService.SetIsActiveAsync(productId, true);
-            }
-            catch (ProductNotFoundException)
-            {
-                return BadRequest("Product not found.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An internal server error occurred.");
-            }
+        return Ok("Product activated successfully.");
+    }
 
-            return NoContent();
+    [HttpPatch("{productId}/deactivate")]
+    [SwaggerOperation(Summary = "Deactivates a product", Description = "Sets the IsActive property of the product to false.")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful deactivation with message
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))] // For product not found
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))] // For internal server errors
+    public async Task<IActionResult> DeactivateProduct(int productId)
+    {
+        try
+        {
+            await productService.SetIsActiveAsync(productId, false);
+        }
+        catch (ProductNotFoundException)
+        {
+            return NotFound("Product not found.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An internal server error occurred.");
         }
 
-        /// <summary>
-        /// Deactivates a product (sets IsActive to false).
-        /// </summary>
-        /// <param name="productId">The ID of the product to deactivate.</param>
-        /// <returns>No Content if the product is deactivated successfully, otherwise a NotFound status.</returns>
-        [HttpPost("deactivate/{productId}")]
-        [SwaggerOperation(Summary = "Deactivates a product", Description = "Sets the IsActive property of the product to false.")]
-        public async Task<IActionResult> DeactivateProduct(int productId)
-        {
-            try
-            {
-                await productService.SetIsActiveAsync(productId, false);
-            }
-            catch (ProductNotFoundException)
-            {
-                return BadRequest("Product not found.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An internal server error occurred.");
-            }
-
-            return NoContent();
-        }
+        return Ok("Product deactivated successfully.");
     }
 }

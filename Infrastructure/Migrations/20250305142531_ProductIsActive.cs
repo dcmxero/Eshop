@@ -2,28 +2,27 @@
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Migrations;
+
+/// <inheritdoc />
+public partial class ProductIsActive : Migration
 {
     /// <inheritdoc />
-    public partial class ProductIsActive : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsActive",
-                table: "Products",
-                type: "bit",
-                nullable: false,
-                defaultValue: true);
-        }
+        migrationBuilder.AddColumn<bool>(
+            name: "IsActive",
+            table: "Products",
+            type: "bit",
+            nullable: false,
+            defaultValue: true);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "IsActive",
-                table: "Products");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            name: "IsActive",
+            table: "Products");
     }
 }
