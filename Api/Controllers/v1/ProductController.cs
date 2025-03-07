@@ -62,7 +62,7 @@ public class ProductsController(IProductService productService) : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id}/description")]
     [SwaggerOperation(Summary = "Update a product description", Description = "Updates product description.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))] // For successful update with message
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))] // For bad request (e.g., invalid productId)
