@@ -111,7 +111,7 @@ public class ProductsControllerV2Tests
         int pageSize = 5;
 
         // Act
-        IActionResult result = await controller.GetProductsV2Async(page, pageSize);
+        IActionResult result = await controller.GetActiveProductsV2Async(page, pageSize);
 
         // Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
