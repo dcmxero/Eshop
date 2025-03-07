@@ -6,20 +6,16 @@ namespace Infrastructure;
 /// <summary>
 /// Represents the database context for managing products.
 /// </summary>
-public class ApplicationDbContext : DbContext
+/// <remarks>
+/// Initializes a new instance of the <see cref="ApplicationDbContext"/> class with the specified options.
+/// </remarks>
+/// <param name="options">The options to configure the context.</param>
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
     /// <summary>
     /// Gets or sets the collection of products in the database.
     /// </summary>
     public DbSet<Product> Products { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class with the specified options.
-    /// </summary>
-    /// <param name="options">The options to configure the context.</param>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
 
     /// <summary>
     /// Configures the model for the <see cref="ApplicationDbContext"/>.
