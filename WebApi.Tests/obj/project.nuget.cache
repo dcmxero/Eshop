@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "3A8qFJ4N9kc=",
+  "dgSpecHash": "N6ExbCr00k4=",
   "success": true,
   "projectFilePath": "C:\\Users\\MMarcinko\\source\\repos\\Eshop\\WebApi.Tests\\WebApi.Tests.csproj",
   "expectedPackageFiles": [
@@ -126,11 +126,11 @@
     "C:\\Users\\MMarcinko\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
-    "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
+    "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore\\7.3.1\\swashbuckle.aspnetcore.7.3.1.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\7.3.1\\swashbuckle.aspnetcore.annotations.7.3.1.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\7.3.1\\swashbuckle.aspnetcore.swagger.7.3.1.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\7.3.1\\swashbuckle.aspnetcore.swaggergen.7.3.1.nupkg.sha512",
-    "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.6.2\\swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg.sha512",
+    "C:\\Users\\MMarcinko\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\7.3.1\\swashbuckle.aspnetcore.swaggerui.7.3.1.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\system.buffers\\4.6.0\\system.buffers.4.6.0.nupkg.sha512",
     "C:\\Users\\MMarcinko\\.nuget\\packages\\system.clientmodel\\1.0.0\\system.clientmodel.1.0.0.nupkg.sha512",

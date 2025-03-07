@@ -13,7 +13,7 @@ public class ProductsController(IProductService productService) : ControllerBase
 {
     private readonly IProductService productService = productService;
 
-    [HttpGet]
+    [HttpGet("all")]
     [SwaggerOperation(Summary = "Get all products", Description = "Retrieves all products. Pagination is not supported in v1.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

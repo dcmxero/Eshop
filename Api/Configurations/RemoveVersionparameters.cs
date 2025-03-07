@@ -1,38 +1,25 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace WebApi.Configurations;
 
-/// <summary>
-/// An operation filter that removes version parameters from the operation.
-/// This includes query parameters, headers, and path parameters related to API versioning.
-/// </summary>
 public class RemoveVersionParameters : IOperationFilter
 {
-    /// <summary>
-    /// Applies the operation filter to remove version-related parameters (e.g., version, api-version, x-api-version).
-    /// </summary>
-    /// <param name="operation">The OpenApi operation to modify.</param>
-    /// <param name="context">The context for the operation, containing information about the operation and the API.</param>
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        // Remove the version parameter from query, header, or path if it's present
-        OpenApiParameter? versionParameter = operation.Parameters.FirstOrDefault(p => p.Name == "version");
-        if (versionParameter != null)
+        // Only remove version parameters from the documentation, not from the actual API calls
+        if (context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<ApiVersionAttribute>().Any())
         {
-            operation.Parameters.Remove(versionParameter);
-        }
+            // Remove version parameters from query, header, or path if it's present in documentation
+            List<OpenApiParameter> versionParameters = [.. operation.Parameters.Where(p => p.Name == "version"
+                                                                   || p.Name == "api-version"
+                                                                   || p.Name == "x-api-version")];
 
-        OpenApiParameter? apiVersionQueryParameter = operation.Parameters.FirstOrDefault(p => p.Name == "api-version");
-        if (apiVersionQueryParameter != null)
-        {
-            operation.Parameters.Remove(apiVersionQueryParameter);
-        }
-
-        OpenApiParameter? apiVersionHeaderParameter = operation.Parameters.FirstOrDefault(p => p.Name == "x-api-version");
-        if (apiVersionHeaderParameter != null)
-        {
-            operation.Parameters.Remove(apiVersionHeaderParameter);
+            foreach (OpenApiParameter? versionParam in versionParameters)
+            {
+                operation.Parameters.Remove(versionParam);
+            }
         }
     }
 }

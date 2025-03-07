@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Configurations;
+using Microsoft.OpenApi.Models;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +26,8 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.ApiVersionReader = ApiVersionReader.Combine(
-        new HeaderApiVersionReader("x-api-version"),  // Reads version from header
-        new QueryStringApiVersionReader("api-version")  // Reads version from query string
+        new HeaderApiVersionReader("x-api-version"),
+        new QueryStringApiVersionReader("api-version")
     );
     options.ReportApiVersions = true;
 });
@@ -44,9 +44,22 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.OperationFilter<RemoveVersionParameters>();
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "My API",
+        Version = "v1",
+        Description = "API for managing products"
+    });
+
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "My API",
+        Version = "v2",
+        Description = "API for managing products allowing getting products with pagination"
+    });
+
+    options.EnableAnnotations();
 });
-builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
