@@ -135,7 +135,7 @@ Activate product.
 ```url
 PUT /api/v1/Products/{id}/deactivate
 ```
-Deactivate prodcut.
+Deactivate product.
 
 ## Running Unit Tests
 To run the unit tests, you can use the following command:
