@@ -103,35 +103,37 @@ Swagger will provide a user-friendly interface to explore and test the available
 Available Endpoints
 ### 1. Get All Products
 ```url
-GET /api/Products
+GET /api/v1/Products/all
+GET /api/v2/Products/all
 ```
 Returns a list of all products.
 
 ### 2. Get Active Products
 ```url
-GET /api/Products/active
+GET /api/v1/Products/active
+GET /api/v2/Products/active
 ```
 Returns a list of all active products.
 
 ### 3. Get Product By ID
 ```url
-GET /api/Products/{id}
+GET /api/v1/Products/{id}
 ```
 Returns a product by its ID.
 
 ### 4. Update Product Description
 ```url
-PUT /api/Products/{id}/description
+PUT /api/v1/Products/{id}/description
 ```
 Updates the description of a product by its ID.
 
 ### 5. Set Product active status
 ```url
-PUT /api/Products/{id}/activate
+PUT /api/v1/Products/{id}/activate
 ```
 Activate product.
 ```url
-PUT /api/Products/{id}/deactivate
+PUT /api/v1/Products/{id}/deactivate
 ```
 Deactivate prodcut.
 
