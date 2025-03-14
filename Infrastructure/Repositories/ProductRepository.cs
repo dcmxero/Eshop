@@ -1,5 +1,4 @@
 ﻿using Domain.Models;
-using Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
@@ -42,10 +41,9 @@ public class ProductRepository(ApplicationDbContext context) : IProductRepositor
             .ToListAsync();
     }
 
-    public async Task<Product> GetByIdAsync(int id)
+    public async Task<Product?> GetByIdAsync(int productId)
     {
-        Product? product = await context.Products.FindAsync(id);
-        return product ?? throw new ProductNotFoundException($"Product with Id: {id} was not found.");
+        return await context.Products.FirstOrDefaultAsync(x => x.Id == productId);
     }
 
     public async Task UpdateAsync(Product product)
@@ -56,7 +54,11 @@ public class ProductRepository(ApplicationDbContext context) : IProductRepositor
 
     public async Task<bool> SetIsActiveAsync(int productId, bool isActive)
     {
-        Product product = await context.Products.FindAsync(productId) ?? throw new ProductNotFoundException($"Product with Id: {productId} was not found.");
+        Product? product = await context.Products.FirstOrDefaultAsync(x => x.Id == productId);
+        if (product == null)
+        {
+            return false;
+        }
         product.IsActive = isActive;
         await context.SaveChangesAsync();
         return true;

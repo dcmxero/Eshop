@@ -22,9 +22,9 @@ public interface IProductService
     /// <summary>
     /// Retrieves a product by its ID.
     /// </summary>
-    /// <param name="id">The ID of the product to retrieve.</param>
+    /// <param name="productId">The ID of the product to retrieve.</param>
     /// <returns>The product with the specified ID.</returns>
-    Task<ProductDto> GetProductByIdAsync(int id);
+    Task<ProductDto?> GetProductByIdAsync(int productId);
 
     /// <summary>
     /// Retrieves products from the service with pagination.
@@ -48,7 +48,7 @@ public interface IProductService
     /// <param name="productId">The ID of the product to update.</param>
     /// <param name="description">The new description for the product.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateProductDescriptionAsync(int productId, string? description);
+    Task<bool> UpdateProductDescriptionAsync(int productId, string? description);
 
     /// <summary>
     /// Sets the active status of a product.
@@ -56,5 +56,5 @@ public interface IProductService
     /// <param name="productId">The ID of the product to update.</param>
     /// <param name="isActive">The new active status of the product.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task SetIsActiveAsync(int productId, bool isActive);
+    Task<bool> SetIsActiveAsync(int productId, bool isActive);
 }

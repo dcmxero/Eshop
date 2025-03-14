@@ -1,7 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Mappers;
 using Domain.Models;
-using Infrastructure.Exceptions;
 using Infrastructure.Repositories;
 
 namespace Application.Services;
@@ -22,19 +21,12 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task<ProductDto> GetProductByIdAsync(int id)
+    public async Task<ProductDto?> GetProductByIdAsync(int productId)
     {
-        try
-        {
-            Product product = await productRepository.GetByIdAsync(id) ?? throw new ProductNotFoundException();
-            ProductDto productDto = product.ToDto();
+        Product? product = await productRepository.GetByIdAsync(productId);
+        ProductDto? productDto = product?.ToDto();
 
-            return productDto;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while retrieving the product.", ex);
-        }
+        return productDto;
     }
 
     public async Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
@@ -49,17 +41,31 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task UpdateProductDescriptionAsync(int productId, string? description)
+    public async Task<bool> UpdateProductDescriptionAsync(int productId, string? description)
     {
-        Product product = await productRepository.GetByIdAsync(productId) ?? throw new ProductNotFoundException();
+        try
+        {
+            Product? product = await productRepository.GetByIdAsync(productId);
 
-        product.Description = description;
+            if (product == null)
+            {
+                return false;
+            }
 
-        await productRepository.UpdateAsync(product);
+            product.Description = description;
+
+            await productRepository.UpdateAsync(product);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while retrieving the product.", ex);
+        }
     }
 
-    public async Task SetIsActiveAsync(int productId, bool isActive)
+    public async Task<bool> SetIsActiveAsync(int productId, bool isActive)
     {
-        await productRepository.SetIsActiveAsync(productId, isActive);
+        return await productRepository.SetIsActiveAsync(productId, isActive);
     }
 }

@@ -38,9 +38,9 @@ public interface IProductRepository
     /// <summary>
     /// Retrieves a product by its ID.
     /// </summary>
-    /// <param name="id">The ID of the product to retrieve.</param>
+    /// <param name="productId">The ID of the product to retrieve.</param>
     /// <returns>The product with the specified ID, or null if not found.</returns>
-    Task<Product> GetByIdAsync(int id);
+    Task<Product?> GetByIdAsync(int productId);
 
     /// <summary>
     /// Updates the details of a product in the repository.

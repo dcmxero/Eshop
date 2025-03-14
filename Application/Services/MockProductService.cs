@@ -1,7 +1,6 @@
 ﻿namespace Application.Services;
 
 using Application.DTOs;
-using Infrastructure.Exceptions;
 
 public class MockProductService : IProductService
 {
@@ -25,10 +24,9 @@ public class MockProductService : IProductService
         return Task.FromResult(products.Where(p => p.IsActive).ToList());
     }
 
-    public Task<ProductDto> GetProductByIdAsync(int id)
+    public Task<ProductDto?> GetProductByIdAsync(int productId)
     {
-        ProductDto? product = products.FirstOrDefault(p => p.Id == id);
-        return product == null ? throw new ProductNotFoundException() : Task.FromResult(product);
+        return Task.FromResult(products.FirstOrDefault(p => p.Id == productId));
     }
 
     public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
@@ -41,26 +39,29 @@ public class MockProductService : IProductService
         return Task.FromResult(products.Where(p => p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ToList());
     }
 
-    public Task UpdateProductDescriptionAsync(int productId, string? description)
+    public Task<bool> UpdateProductDescriptionAsync(int productId, string? description)
     {
         ProductDto? product = products.FirstOrDefault(p => p.Id == productId);
 
-        if (product != null)
+        if (product == null)
         {
-            product.Description = description;
-            return Task.CompletedTask;
+            return Task.FromResult(false);
         }
 
-        return Task.CompletedTask;
+        product.Description = description;
+        return Task.FromResult(true);
     }
 
-    public Task SetIsActiveAsync(int productId, bool isActive)
+    public Task<bool> SetIsActiveAsync(int productId, bool isActive)
     {
         ProductDto? product = products.FirstOrDefault(p => p.Id == productId);
-        if (product != null)
+
+        if (product == null)
         {
-            product.IsActive = isActive;
+            return Task.FromResult(false);
         }
-        return Task.CompletedTask;
+
+        product.IsActive = isActive;
+        return Task.FromResult(true);
     }
 }
