@@ -42,7 +42,7 @@ public class ProductsControllerV1Tests
             new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1" },
             new() { Id = 2, Name = "Product 2", ImgUri = "image2.jpg", Price = 19.99M, Description = "Description 2" }
         ];
-        mockProductService.Setup(service => service.GetAllProductsAsync()).ReturnsAsync(products);
+        mockProductService.Setup(service => service.GetAllProductsAsync(default)).ReturnsAsync(products);
 
         // Act: Call the GetProductsAsync method on the controller.
         IActionResult result = await controller.GetProductsAsync();
@@ -68,7 +68,7 @@ public class ProductsControllerV1Tests
         ];
 
         // Mock service to return only the active products.
-        mockProductService.Setup(service => service.GetAllActiveProductsAsync()).ReturnsAsync(activeProducts);
+        mockProductService.Setup(service => service.GetAllActiveProductsAsync(default)).ReturnsAsync(activeProducts);
 
         // Act: Call the GetActiveProductsAsync method on the controller.
         IActionResult result = await controller.GetActiveProductsAsync();
@@ -94,7 +94,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Prepare the product DTO to be returned by the mock service.
         ProductDto productDto = new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1" };
-        mockProductService.Setup(service => service.GetProductByIdAsync(1)).ReturnsAsync(productDto);
+        mockProductService.Setup(service => service.GetProductByIdAsync(1, default)).ReturnsAsync(productDto);
 
         // Act: Call the GetProductById method on the controller.
         IActionResult result = await controller.GetProductByIdAsync(1);
@@ -114,7 +114,7 @@ public class ProductsControllerV1Tests
     public async Task GetProductById_ReturnsNotFound_WhenProductDoesNotExist()
     {
         // Arrange: Setup the mock service to return null for a non-existing product.
-        mockProductService.Setup(service => service.GetProductByIdAsync(It.IsAny<int>())).ReturnsAsync((ProductDto?)null);
+        mockProductService.Setup(service => service.GetProductByIdAsync(It.IsAny<int>(), default)).ReturnsAsync((ProductDto?)null);
 
         // Act: Call the GetProductById method on the controller with a non-existing product ID.
         IActionResult result = await controller.GetProductByIdAsync(9999);
@@ -139,7 +139,7 @@ public class ProductsControllerV1Tests
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = 1;
 
-        mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description)).ReturnsAsync(true); // Mocking the update success
+        mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description, default)).ReturnsAsync(true); // Mocking the update success
 
         // Act: Call the UpdateProductDescriptionAsync method on the controller.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
@@ -177,7 +177,7 @@ public class ProductsControllerV1Tests
         // Arrange: Prepare a request and set the product ID to a valid value, but mock the service to throw ProductNotFoundException.
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = 1;
-        mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description)).ReturnsAsync(false);
+        mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description, default)).ReturnsAsync(false);
 
         // Act: Call the UpdateProductDescriptionAsync method with the ID of a nonexistent product.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
@@ -197,7 +197,7 @@ public class ProductsControllerV1Tests
         // Arrange: Prepare a request with a new description and mock the service to throw a general exception.
         UpdateProductDto request = new() { Description = "Updated Description" };
         int id = 1;
-        mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description)).ThrowsAsync(new Exception());
+        mockProductService.Setup(service => service.UpdateProductDescriptionAsync(id, request.Description, default)).ThrowsAsync(new Exception());
 
         // Act: Call the UpdateProductDescriptionAsync method while the service throws an exception.
         IActionResult result = await controller.UpdateProductDescriptionAsync(id, request);
@@ -222,7 +222,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Prepare product ID and mock the service to activate the product.
         int productId = 1;
-        mockProductService.Setup(service => service.SetIsActiveAsync(productId, true)).ReturnsAsync(true);
+        mockProductService.Setup(service => service.SetIsActiveAsync(productId, true, default)).ReturnsAsync(true);
 
         // Act: Call the ActivateProductAsync method on the controller.
         IActionResult result = await controller.ActivateProductAsync(productId);
@@ -241,7 +241,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Set up mock to throw a ProductNotFoundException when the product ID is used.
         int productId = 1;
-        mockProductService.Setup(service => service.SetIsActiveAsync(productId, true)).ReturnsAsync(false);
+        mockProductService.Setup(service => service.SetIsActiveAsync(productId, true, default)).ReturnsAsync(false);
 
         // Act: Call the ActivateProductAsync method with a nonexistent product.
         IActionResult result = await controller.ActivateProductAsync(productId);
@@ -260,7 +260,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Prepare the product ID and set up the mock service to throw an unexpected error.
         int productId = 1;
-        mockProductService.Setup(service => service.SetIsActiveAsync(productId, true)).ThrowsAsync(new Exception());
+        mockProductService.Setup(service => service.SetIsActiveAsync(productId, true, default)).ThrowsAsync(new Exception());
 
         // Act: Call the ActivateProductAsync method on the controller.
         IActionResult result = await controller.ActivateProductAsync(productId);
@@ -284,7 +284,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Prepare the product ID and mock the service to deactivate the product.
         int productId = 1;
-        mockProductService.Setup(service => service.SetIsActiveAsync(productId, false)).ReturnsAsync(true);
+        mockProductService.Setup(service => service.SetIsActiveAsync(productId, false, default)).ReturnsAsync(true);
 
         // Act: Call the DeactivateProductAsync method on the controller.
         IActionResult result = await controller.DeactivateProductAsync(productId);
@@ -303,7 +303,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Set up mock to throw a ProductNotFoundException when the product ID is used.
         int productId = 1;
-        mockProductService.Setup(service => service.SetIsActiveAsync(productId, false)).ReturnsAsync(false);
+        mockProductService.Setup(service => service.SetIsActiveAsync(productId, false, default)).ReturnsAsync(false);
 
         // Act: Call the DeactivateProductAsync method with a nonexistent product.
         IActionResult result = await controller.DeactivateProductAsync(productId);
@@ -322,7 +322,7 @@ public class ProductsControllerV1Tests
     {
         // Arrange: Prepare the product ID and set up the mock service to throw an unexpected error.
         int productId = 1;
-        mockProductService.Setup(service => service.SetIsActiveAsync(productId, false)).ThrowsAsync(new Exception());
+        mockProductService.Setup(service => service.SetIsActiveAsync(productId, false, default)).ThrowsAsync(new Exception());
 
         // Act: Call the DeactivateProductAsync method on the controller.
         IActionResult result = await controller.DeactivateProductAsync(productId);

@@ -9,43 +9,43 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 {
     private readonly IProductRepository productRepository = productRepository;
 
-    public async Task<List<ProductDto>> GetAllProductsAsync()
+    public async Task<List<ProductDto>> GetAllProductsAsync(CancellationToken cancellationToken = default)
     {
-        List<Product> products = await productRepository.GetAllProductsAsync();
+        List<Product> products = await productRepository.GetAllProductsAsync(cancellationToken);
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task<List<ProductDto>> GetAllActiveProductsAsync()
+    public async Task<List<ProductDto>> GetAllActiveProductsAsync(CancellationToken cancellationToken = default)
     {
-        List<Product> products = await productRepository.GetAllActiveProductsAsync();
+        List<Product> products = await productRepository.GetAllActiveProductsAsync(cancellationToken);
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task<ProductDto?> GetProductByIdAsync(int productId)
+    public async Task<ProductDto?> GetProductByIdAsync(int productId, CancellationToken cancellationToken = default)
     {
-        Product? product = await productRepository.GetByIdAsync(productId);
+        Product? product = await productRepository.GetByIdAsync(productId, cancellationToken);
         ProductDto? productDto = product?.ToDto();
 
         return productDto;
     }
 
-    public async Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
+    public async Task<List<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        List<Product> products = await productRepository.GetProductsAsync(page, pageSize);
+        List<Product> products = await productRepository.GetProductsAsync(page, pageSize, cancellationToken);
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize)
+    public async Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        List<Product> products = await productRepository.GetActiveProductsAsync(page, pageSize);
+        List<Product> products = await productRepository.GetActiveProductsAsync(page, pageSize, cancellationToken);
         return [.. products.Select(ProductMapper.ToDto)];
     }
 
-    public async Task<bool> UpdateProductDescriptionAsync(int productId, string? description)
+    public async Task<bool> UpdateProductDescriptionAsync(int productId, string? description, CancellationToken cancellationToken = default)
     {
         try
         {
-            Product? product = await productRepository.GetByIdAsync(productId);
+            Product? product = await productRepository.GetByIdAsync(productId, cancellationToken);
 
             if (product == null)
             {
@@ -54,7 +54,7 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
             product.Description = description;
 
-            await productRepository.UpdateAsync(product);
+            await productRepository.UpdateAsync(product, cancellationToken);
 
             return true;
         }
@@ -64,8 +64,8 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         }
     }
 
-    public async Task<bool> SetIsActiveAsync(int productId, bool isActive)
+    public async Task<bool> SetIsActiveAsync(int productId, bool isActive, CancellationToken cancellationToken = default)
     {
-        return await productRepository.SetIsActiveAsync(productId, isActive);
+        return await productRepository.SetIsActiveAsync(productId, isActive, cancellationToken);
     }
 }

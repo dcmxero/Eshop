@@ -21,9 +21,9 @@ public class ProductsController(IProductService productService) : ControllerBase
     [HttpGet("all")]
     [SwaggerOperation(Summary = "Get all products", Description = "Retrieves all products. Pagination is not supported in v1.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
-    public async Task<IActionResult> GetProductsAsync()
+    public async Task<IActionResult> GetProductsAsync(CancellationToken cancellationToken = default)
     {
-        List<ProductDto> products = await productService.GetAllProductsAsync();
+        List<ProductDto> products = await productService.GetAllProductsAsync(cancellationToken);
         return Ok(products);
     }
 
@@ -35,9 +35,9 @@ public class ProductsController(IProductService productService) : ControllerBase
     [HttpGet("active")]
     [SwaggerOperation(Summary = "Get all active products", Description = "Retrieves all active products.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
-    public async Task<IActionResult> GetActiveProductsAsync()
+    public async Task<IActionResult> GetActiveProductsAsync(CancellationToken cancellationToken = default)
     {
-        List<ProductDto> products = await productService.GetAllActiveProductsAsync();
+        List<ProductDto> products = await productService.GetAllActiveProductsAsync(cancellationToken);
         return Ok(products);
     }
 
@@ -52,9 +52,9 @@ public class ProductsController(IProductService productService) : ControllerBase
     [SwaggerOperation(Summary = "Get product by ID", Description = "Retrieves a product by its ID.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-    public async Task<IActionResult> GetProductByIdAsync(int id)
+    public async Task<IActionResult> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        ProductDto? product = await productService.GetProductByIdAsync(id);
+        ProductDto? product = await productService.GetProductByIdAsync(id, cancellationToken);
         return product == null ? NotFound("Product not found.") : Ok(product);
     }
 
@@ -72,11 +72,11 @@ public class ProductsController(IProductService productService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> UpdateProductDescriptionAsync(int id, [FromBody] UpdateProductDto request)
+    public async Task<IActionResult> UpdateProductDescriptionAsync(int id, [FromBody] UpdateProductDto request, CancellationToken cancellationToken = default)
     {
         try
         {
-            bool updateSucceeded = await productService.UpdateProductDescriptionAsync(id, request.Description);
+            bool updateSucceeded = await productService.UpdateProductDescriptionAsync(id, request.Description, cancellationToken);
             return !updateSucceeded ? NotFound("Product not found.") : Ok("Product description updated successfully.");
         }
         catch (Exception)
@@ -96,11 +96,11 @@ public class ProductsController(IProductService productService) : ControllerBase
     [SwaggerOperation(Summary = "Activates a product", Description = "Sets the IsActive property of the product to true.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-    public async Task<IActionResult> ActivateProductAsync(int productId)
+    public async Task<IActionResult> ActivateProductAsync(int productId, CancellationToken cancellationToken = default)
     {
         try
         {
-            bool activationSucceeded = await productService.SetIsActiveAsync(productId, true);
+            bool activationSucceeded = await productService.SetIsActiveAsync(productId, true, cancellationToken);
             return !activationSucceeded ? NotFound("Product activation was not successful.") : Ok("Product activated successfully.");
         }
         catch (Exception)
@@ -120,11 +120,11 @@ public class ProductsController(IProductService productService) : ControllerBase
     [SwaggerOperation(Summary = "Deactivates a product", Description = "Sets the IsActive property of the product to false.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-    public async Task<IActionResult> DeactivateProductAsync(int productId)
+    public async Task<IActionResult> DeactivateProductAsync(int productId, CancellationToken cancellationToken = default)
     {
         try
         {
-            bool deactivationSucceeded = await productService.SetIsActiveAsync(productId, false);
+            bool deactivationSucceeded = await productService.SetIsActiveAsync(productId, false, cancellationToken);
             return !deactivationSucceeded ? NotFound("Product deactivation was not successful.") : Ok("Product deactivated successfully.");
         }
         catch (Exception)

@@ -14,32 +14,32 @@ public class MockProductService : IProductService
     new ProductDto { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true }
 ];
 
-    public Task<List<ProductDto>> GetAllProductsAsync()
+    public Task<List<ProductDto>> GetAllProductsAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products);
     }
 
-    public Task<List<ProductDto>> GetAllActiveProductsAsync()
+    public Task<List<ProductDto>> GetAllActiveProductsAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products.Where(p => p.IsActive).ToList());
     }
 
-    public Task<ProductDto?> GetProductByIdAsync(int productId)
+    public Task<ProductDto?> GetProductByIdAsync(int productId, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products.FirstOrDefault(p => p.Id == productId));
     }
 
-    public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
+    public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products.Skip((page - 1) * pageSize).Take(pageSize).ToList());
     }
 
-    public Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize)
+    public Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products.Where(p => p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ToList());
     }
 
-    public Task<bool> UpdateProductDescriptionAsync(int productId, string? description)
+    public Task<bool> UpdateProductDescriptionAsync(int productId, string? description, CancellationToken cancellationToken = default)
     {
         ProductDto? product = products.FirstOrDefault(p => p.Id == productId);
 
@@ -52,7 +52,7 @@ public class MockProductService : IProductService
         return Task.FromResult(true);
     }
 
-    public Task<bool> SetIsActiveAsync(int productId, bool isActive)
+    public Task<bool> SetIsActiveAsync(int productId, bool isActive, CancellationToken cancellationToken = default)
     {
         ProductDto? product = products.FirstOrDefault(p => p.Id == productId);
 
