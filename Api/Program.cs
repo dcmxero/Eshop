@@ -1,3 +1,4 @@
+using Application.Features.Products;
 using Application.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
@@ -15,12 +16,17 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register the controller services to handle incoming HTTP requests.
-builder.Services.AddControllers();
-
 // Register Product repository and service for dependency injection.
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+// Register MediatR services, pointing to the assembly where your handlers are located
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(GetProductsHandler).Assembly));
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(GetActiveProductsHandler).Assembly));
+
+
+// Register the controller services to handle incoming HTTP requests.
+builder.Services.AddControllers();
 
 // API Versioning configuration
 builder.Services.AddApiVersioning(options =>

@@ -1,6 +1,7 @@
-﻿using Application.Services;
+﻿using Application.Features.Products;
 using DTOs.Common;
 using DTOs.Product;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -9,9 +10,9 @@ namespace WebApi.Controllers.v2;
 [ApiController]
 [ApiVersion("2.0")]
 [Route("api/v2/products")]
-public class ProductsController(IProductService productService) : ControllerBase
+public class ProductsController(IMediator mediator) : ControllerBase
 {
-    private readonly IProductService productService = productService;
+    private readonly IMediator mediator = mediator;
 
     /// <summary>
     /// Retrieves products with pagination.
@@ -37,8 +38,8 @@ public class ProductsController(IProductService productService) : ControllerBase
             return BadRequest("Page size must be 1 or greater.");
         }
 
-        PaginatedList<ProductDto> pagedProducts = await productService.GetProductsAsync(page, pageSize, cancellationToken);
-        return Ok(pagedProducts);
+        PaginatedList<ProductDto> result = await mediator.Send(new GetProductsRequest { Page = page, PageSize = pageSize }, cancellationToken);
+        return Ok(result);
     }
 
     /// <summary>
@@ -65,7 +66,7 @@ public class ProductsController(IProductService productService) : ControllerBase
             return BadRequest("Page size must be 1 or greater.");
         }
 
-        PaginatedList<ProductDto> pagedProducts = await productService.GetActiveProductsAsync(page, pageSize, cancellationToken);
-        return Ok(pagedProducts);
+        PaginatedList<ProductDto> result = await mediator.Send(new GetActiveProductsRequest { Page = page, PageSize = pageSize }, cancellationToken);
+        return Ok(result);
     }
 }

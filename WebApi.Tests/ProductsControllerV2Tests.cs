@@ -1,11 +1,15 @@
-﻿using Application.Services;
+﻿using Application.Features.Products;
+using Application.Services;
 using DTOs.Common;
 using DTOs.Product;
 using Infrastructure;
 using Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using WebApi.Controllers.v2;
 using Xunit;
 
@@ -17,7 +21,7 @@ namespace WebApi.Tests;
 /// </summary>
 public class ProductsControllerV2Tests
 {
-    private readonly IProductService productService;
+    private readonly IMediator mediator;
     private readonly ProductsController controller;
 
     /// <summary>
@@ -26,50 +30,87 @@ public class ProductsControllerV2Tests
     /// </summary>
     public ProductsControllerV2Tests()
     {
-        productService = CreateProductService();
-        controller = new ProductsController(productService);
+        mediator = CreateMediator();
+        controller = new ProductsController(mediator);
     }
 
     /// <summary>
-    /// Creates an instance of the IProductService based on the configuration from appsettings.json.
-    /// If UseMockProductService is true, a mock product service is used; otherwise, a real product service is created using the database.
+    /// Creates an instance of IMediator based on the configuration from appsettings.json.
+    /// If UseMockMediator is true, a mock mediator with predefined responses is used; otherwise, the real mediator is created for actual data handling.
     /// </summary>
-    /// <returns>The product service to be used in the controller.</returns>
-    private static IProductService CreateProductService()
+    /// <returns>The IMediator to be used in the application or tests.</returns>
+    private static IMediator CreateMediator()
     {
         // Load configuration from appsettings.json
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
 
-        // Get the value of UseMockProductService from appsettings.json
-        bool useMock = configuration.GetValue<bool>("UseMockProductService");
+        // Get the value of UseMockData from appsettings.json
+        bool useMock = configuration.GetValue<bool>("UseMockData");
 
         if (useMock)
         {
-            return new MockProductService(); // Use mock data
+            Mock<IMediator> mediatorMock = new();
+
+            mediatorMock.Setup(m => m.Send(It.IsAny<GetProductsRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((GetProductsRequest request, CancellationToken token) =>
+                {
+                    List<ProductDto> allProducts =
+                    [
+                        new() { Id = 1, Name = "Product 1", ImgUri = "product1.jpg", Price = 10.99M, IsActive = true },
+                        new() { Id = 2, Name = "Product 2", ImgUri = "product2.jpg", Price = 12.99M, IsActive = false },
+                        new() { Id = 3, Name = "Product 3", ImgUri = "product3.jpg", Price = 14.99M, IsActive = true },
+                        new() { Id = 4, Name = "Product 4", ImgUri = "product4.jpg", Price = 16.99M, IsActive = true },
+                        new() { Id = 5, Name = "Product 5", ImgUri = "product5.jpg", Price = 18.99M, IsActive = false },
+                        new() { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true }
+                    ];
+
+                    // Paginate the result
+                    List<ProductDto> paginatedProducts = [.. allProducts
+                        .Skip((request.Page - 1) * request.PageSize)
+                        .Take(request.PageSize)];
+
+                    return new PaginatedList<ProductDto>(paginatedProducts, allProducts.Count, request.Page, request.PageSize);
+                });
+
+            // Setup mock response for GetActiveProductsRequest
+            mediatorMock.Setup(m => m.Send(It.IsAny<GetActiveProductsRequest>(), It.IsAny<CancellationToken>()))
+                 .ReturnsAsync((GetActiveProductsRequest request, CancellationToken token) =>
+                 {
+                     List<ProductDto> allProducts =
+                     [
+                         new() { Id = 1, Name = "Product 1", ImgUri = "product1.jpg", Price = 10.99M, IsActive = true },
+                        new() { Id = 2, Name = "Product 2", ImgUri = "product2.jpg", Price = 12.99M, IsActive = false },
+                        new() { Id = 3, Name = "Product 3", ImgUri = "product3.jpg", Price = 14.99M, IsActive = true },
+                        new() { Id = 4, Name = "Product 4", ImgUri = "product4.jpg", Price = 16.99M, IsActive = true },
+                        new() { Id = 5, Name = "Product 5", ImgUri = "product5.jpg", Price = 18.99M, IsActive = false },
+                        new() { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true }
+                     ];
+
+                     // Paginate the result
+                     List<ProductDto> paginatedProducts = [.. allProducts
+                        .Where(x => x.IsActive)
+                        .Skip((request.Page - 1) * request.PageSize)
+                        .Take(request.PageSize)];
+
+                     return new PaginatedList<ProductDto>(paginatedProducts, allProducts.Count, request.Page, request.PageSize);
+                 });
+
+            return mediatorMock.Object; // Return the mocked mediator
         }
         else
         {
-            // Get the connection string from appsettings.json
-            string? connectionString = configuration.GetConnectionString("DefaultConnection");
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))) // Register your DbContext
+                .AddMediatR(config => config.RegisterServicesFromAssembly(typeof(GetProductsHandler).Assembly)) // Register MediatR
+                .AddMediatR(config => config.RegisterServicesFromAssembly(typeof(GetActiveProductsHandler).Assembly)) // Register MediatR
+                .AddScoped<IProductService, ProductService>()    // Register ProductService
+                .AddScoped<IProductRepository, ProductRepository>() // Register ProductRepository
+                .BuildServiceProvider();
 
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new Exception("DefaultConnection not found");
-            }
-
-            // Configure the DbContext with the connection string
-            DbContextOptionsBuilder<ApplicationDbContext> optionsBuilder = new();
-            optionsBuilder.UseSqlServer(connectionString); // You can replace UseSqlServer if using another database provider
-
-            ApplicationDbContext dbContext = new(optionsBuilder.Options);
-
-            // Create the repository using the dbContext
-            IProductRepository productRepository = new ProductRepository(dbContext);
-
-            // Return the actual ProductService that uses the repository
-            return new ProductService(productRepository);
+            return serviceProvider.GetRequiredService<IMediator>(); // Return the real mediator
         }
     }
 
