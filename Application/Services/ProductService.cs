@@ -1,6 +1,7 @@
-﻿using Application.DTOs;
-using Application.Mappers;
+﻿using Application.Mappers;
 using Domain.Models;
+using DTOs.Common;
+using DTOs.Product;
 using Infrastructure.Repositories;
 
 namespace Application.Services;
@@ -29,16 +30,16 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return productDto;
     }
 
-    public async Task<List<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        List<Product> products = await productRepository.GetProductsAsync(page, pageSize, cancellationToken);
-        return [.. products.Select(ProductMapper.ToDto)];
+        DataResultDto<Product> products = await productRepository.GetProductsAsync(page, pageSize, cancellationToken);
+        return new PaginatedList<ProductDto>([.. products.Data.Select(ProductMapper.ToDto)], products.Count, page, pageSize);
     }
 
-    public async Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        List<Product> products = await productRepository.GetActiveProductsAsync(page, pageSize, cancellationToken);
-        return [.. products.Select(ProductMapper.ToDto)];
+        DataResultDto<Product> activeProducts = await productRepository.GetActiveProductsAsync(page, pageSize, cancellationToken);
+        return new PaginatedList<ProductDto>([.. activeProducts.Data.Select(ProductMapper.ToDto)], activeProducts.Count, page, pageSize);
     }
 
     public async Task<bool> UpdateProductDescriptionAsync(int productId, string? description, CancellationToken cancellationToken = default)

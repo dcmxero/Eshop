@@ -1,4 +1,5 @@
-﻿using Application.DTOs;
+﻿using DTOs.Common;
+using DTOs.Product;
 
 namespace Application.Services;
 
@@ -31,16 +32,16 @@ public interface IProductService
     /// </summary>
     /// <param name="page">The page number to retrieve.</param>
     /// <param name="pageSize">The number of products per page.</param>
-    /// <returns>A list of products for the specified page and size.</returns>
-    Task<List<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+    /// <returns>A paginated list of products for the specified page and size.</returns>
+    Task<PaginatedList<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves active products from the service with pagination.
     /// </summary>
     /// <param name="page">The page number to retrieve.</param>
     /// <param name="pageSize">The number of active products per page.</param>
-    /// <returns>A list of active products for the specified page and size.</returns>
-    Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+    /// <returns>A paginated list of active products for the specified page and size.</returns>
+    Task<PaginatedList<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates the description of a product.

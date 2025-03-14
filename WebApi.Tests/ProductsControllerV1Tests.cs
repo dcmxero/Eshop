@@ -1,5 +1,5 @@
-﻿using Application.DTOs;
-using Application.Services;
+﻿using Application.Services;
+using DTOs.Product;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApi.Controllers.v1;

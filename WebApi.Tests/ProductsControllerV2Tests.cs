@@ -1,5 +1,6 @@
-﻿using Application.DTOs;
-using Application.Services;
+﻿using Application.Services;
+using DTOs.Common;
+using DTOs.Product;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -91,9 +92,9 @@ public class ProductsControllerV2Tests
 
         // Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-        List<ProductDto> returnValue = Assert.IsType<List<ProductDto>>(okResult.Value);
-        Assert.Equal(pageSize, returnValue.Count); // Verify that only the correct number of products are returned
-        Assert.Equal("Product 5", returnValue[^1].Name); // Ensure the last product returned matches
+        PaginatedList<ProductDto> response = Assert.IsType<PaginatedList<ProductDto>>(okResult.Value);
+        Assert.Equal(pageSize, response.Data.Count); // Verify that only the correct number of products are returned
+        Assert.Equal("Product 5", response.Data[^1].Name); // Ensure the last product returned matches
     }
 
     /// <summary>
@@ -115,12 +116,12 @@ public class ProductsControllerV2Tests
 
         // Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-        List<ProductDto> returnValue = Assert.IsType<List<ProductDto>>(okResult.Value);
+        PaginatedList<ProductDto> returnValue = Assert.IsType<PaginatedList<ProductDto>>(okResult.Value);
 
         // Ensure only active products are returned
-        Assert.All(returnValue, product => Assert.True(product.IsActive));
+        Assert.All(returnValue.Data, product => Assert.True(product.IsActive));
 
         // Ensure the correct number of active products are returned based on the page size
-        Assert.Equal(4, returnValue.Count); // Only 4 active products are available
+        Assert.Equal(4, returnValue.Data.Count); // Only 4 active products are available
     }
 }

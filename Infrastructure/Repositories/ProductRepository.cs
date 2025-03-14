@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using DTOs.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
@@ -22,23 +23,43 @@ public class ProductRepository(ApplicationDbContext context) : IProductRepositor
             .ToListAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task<List<Product>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<Product>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return await context
+        // Get the paginated products from the database
+        List<Product> products = await context
             .Products
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken);
+
+        // Get the total count of products
+        int totalCount = await context.Products.CountAsync(cancellationToken);
+
+        return new DataResultDto<Product>
+        {
+            Data = products, // List of products for the current page
+            Count = totalCount // Total count of products
+        };
     }
 
-    public async Task<List<Product>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<Product>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return await context
+        // Get the paginated active products from the database
+        List<Product> products = await context
             .Products
             .Where(x => x.IsActive)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken);
+
+        // Get the total count of active products
+        int totalCount = await context.Products.CountAsync(x => x.IsActive, cancellationToken);
+
+        return new DataResultDto<Product>
+        {
+            Data = products, // List of active products for the current page
+            Count = totalCount // Total count of active products
+        };
     }
 
     public async Task<Product?> GetByIdAsync(int productId, CancellationToken cancellationToken = default)

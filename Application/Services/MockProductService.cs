@@ -1,6 +1,8 @@
-﻿namespace Application.Services;
+﻿using Application.Mappers;
+using DTOs.Common;
+using DTOs.Product;
 
-using Application.DTOs;
+namespace Application.Services;
 
 public class MockProductService : IProductService
 {
@@ -29,14 +31,14 @@ public class MockProductService : IProductService
         return Task.FromResult(products.FirstOrDefault(p => p.Id == productId));
     }
 
-    public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(products.Skip((page - 1) * pageSize).Take(pageSize).ToList());
+        return Task.FromResult(new PaginatedList<ProductDto>([.. products.Skip((page - 1) * pageSize).Take(pageSize)], products.Count, page, pageSize));
     }
 
-    public Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(products.Where(p => p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ToList());
+        return Task.FromResult(new PaginatedList<ProductDto>([.. products.Where(p => p.IsActive).Skip((page - 1) * pageSize).Take(pageSize)], products.Count, page, pageSize));
     }
 
     public Task<bool> UpdateProductDescriptionAsync(int productId, string? description, CancellationToken cancellationToken = default)
@@ -63,5 +65,5 @@ public class MockProductService : IProductService
 
         product.IsActive = isActive;
         return Task.FromResult(true);
-    }
+    }    
 }

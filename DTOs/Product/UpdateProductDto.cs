@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 
-namespace Application.DTOs;
+namespace DTOs.Product;
 
 /// <summary>
 /// Represents the data transfer object (DTO) for updating a product.

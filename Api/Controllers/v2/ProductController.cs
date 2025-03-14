@@ -1,5 +1,6 @@
-﻿using Application.DTOs;
-using Application.Services;
+﻿using Application.Services;
+using DTOs.Common;
+using DTOs.Product;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,20 +18,26 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// </summary>
     /// <param name="page">The page number (must be 1 or greater).</param>
     /// <param name="pageSize">The number of products per page (must be 1 or greater).</param>
-    /// <returns>A paged list of products.</returns>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
+    /// <returns>A paged list of products with pagination info.</returns>
     [HttpGet("all")]
     [SwaggerOperation(Summary = "Get products with pagination", Description = "Retrieves products with pagination.")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetProductsV2Async(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetProductsV2Async(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
     {
-        if (page < 1 || pageSize < 1)
+        if (page < 1)
         {
-            return BadRequest("Page number and page size must be 1 or greater.");
+            return BadRequest("Page number must be 1 or greater.");
         }
 
-        List<ProductDto> pagedProducts = await productService.GetProductsAsync(page, pageSize);
+        if (pageSize < 1)
+        {
+            return BadRequest("Page size must be 1 or greater.");
+        }
+
+        PaginatedList<ProductDto> pagedProducts = await productService.GetProductsAsync(page, pageSize, cancellationToken);
         return Ok(pagedProducts);
     }
 
@@ -39,20 +46,26 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// </summary>
     /// <param name="page">The page number (must be 1 or greater).</param>
     /// <param name="pageSize">The number of products per page (must be 1 or greater).</param>
-    /// <returns>A paged list of active products.</returns>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
+    /// <returns>A paged list of active products with pagination info.</returns>
     [HttpGet("active")]
     [SwaggerOperation(Summary = "Get active products with pagination", Description = "Retrieves active products with pagination.")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetActiveProductsV2Async(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetActiveProductsV2Async(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
     {
-        if (page < 1 || pageSize < 1)
+        if (page < 1)
         {
-            return BadRequest("Page number and page size must be 1 or greater.");
+            return BadRequest("Page number must be 1 or greater.");
         }
 
-        List<ProductDto> pagedProducts = await productService.GetActiveProductsAsync(page, pageSize);
+        if (pageSize < 1)
+        {
+            return BadRequest("Page size must be 1 or greater.");
+        }
+
+        PaginatedList<ProductDto> pagedProducts = await productService.GetActiveProductsAsync(page, pageSize, cancellationToken);
         return Ok(pagedProducts);
     }
 }

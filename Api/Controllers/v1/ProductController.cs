@@ -1,5 +1,5 @@
-﻿using Application.DTOs;
-using Application.Services;
+﻿using Application.Services;
+using DTOs.Product;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,6 +16,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// Retrieves all products.
     /// </summary>
     /// <remarks>Pagination is not supported in v1.</remarks>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A list of all products.</returns>
     /// <response code="200">Returns a list of products.</response>
     [HttpGet("all")]
@@ -30,6 +31,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <summary>
     /// Retrieves all active products.
     /// </summary>
+    /// <remarks>Pagination is not supported in v1.</remarks>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A list of all active products.</returns>
     /// <response code="200">Returns a list of active products.</response>
     [HttpGet("active")]
@@ -45,6 +48,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// Retrieves a product by its ID.
     /// </summary>
     /// <param name="id">The ID of the product to retrieve.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>The product with the specified ID.</returns>
     /// <response code="200">Returns the product with the specified ID.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
@@ -63,6 +67,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the product to update.</param>
     /// <param name="request">The request body containing the new product description.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A message indicating the success of the update.</returns>
     /// <response code="200">Product description updated successfully.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
@@ -89,6 +94,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// Activates a product by setting its IsActive property to true.
     /// </summary>
     /// <param name="productId">The ID of the product to activate.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A message indicating the success of the activation.</returns>
     /// <response code="200">Product activated successfully.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
@@ -113,6 +119,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// Deactivates a product by setting its IsActive property to false.
     /// </summary>
     /// <param name="productId">The ID of the product to deactivate.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A message indicating the success of the deactivation.</returns>
     /// <response code="200">Product deactivated successfully.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
