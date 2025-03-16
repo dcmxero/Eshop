@@ -7,7 +7,7 @@ namespace WebApi.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("api/v1/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class ProductsController(IProductService productService) : ControllerBase
 {
     private readonly IProductService productService = productService;
@@ -19,7 +19,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A list of all products.</returns>
     /// <response code="200">Returns a list of products.</response>
-    [HttpGet("all")]
+    [HttpGet]
+    [Route("all")]
     [SwaggerOperation(Summary = "Get all products", Description = "Retrieves all products. Pagination is not supported in v1.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     public async Task<IActionResult> GetProductsAsync(CancellationToken cancellationToken = default)
@@ -35,7 +36,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A list of all active products.</returns>
     /// <response code="200">Returns a list of active products.</response>
-    [HttpGet("active")]
+    [HttpGet]
+    [Route("active")]
     [SwaggerOperation(Summary = "Get all active products", Description = "Retrieves all active products.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductDto>))]
     public async Task<IActionResult> GetActiveProductsAsync(CancellationToken cancellationToken = default)
@@ -52,7 +54,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <returns>The product with the specified ID.</returns>
     /// <response code="200">Returns the product with the specified ID.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
-    [HttpGet("{id}")]
+    [HttpGet]
+    [Route("{id}")]
     [SwaggerOperation(Summary = "Get product by ID", Description = "Retrieves a product by its ID.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -72,7 +75,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <response code="200">Product description updated successfully.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
     /// <response code="500">If an internal server error occurs.</response>
-    [HttpPut("{id}/description")]
+    [HttpPut]
+    [Route("{id}/description")]
     [SwaggerOperation(Summary = "Update a product description", Description = "Updates product description.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -98,7 +102,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <returns>A message indicating the success of the activation.</returns>
     /// <response code="200">Product activated successfully.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
-    [HttpPatch("{productId}/activate")]
+    [HttpPatch]
+    [Route("{productId}/activate")]
     [SwaggerOperation(Summary = "Activates a product", Description = "Sets the IsActive property of the product to true.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -123,7 +128,8 @@ public class ProductsController(IProductService productService) : ControllerBase
     /// <returns>A message indicating the success of the deactivation.</returns>
     /// <response code="200">Product deactivated successfully.</response>
     /// <response code="404">If the product with the specified ID is not found.</response>
-    [HttpPatch("{productId}/deactivate")]
+    [HttpPatch]
+    [Route("{productId}/deactivate")]
     [SwaggerOperation(Summary = "Deactivates a product", Description = "Sets the IsActive property of the product to false.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]

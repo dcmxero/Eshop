@@ -9,7 +9,7 @@ namespace WebApi.Controllers.v2;
 
 [ApiController]
 [ApiVersion("2.0")]
-[Route("api/v2/products")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class ProductsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator mediator = mediator;
@@ -21,7 +21,8 @@ public class ProductsController(IMediator mediator) : ControllerBase
     /// <param name="pageSize">The number of products per page (must be 1 or greater).</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A paged list of products with pagination info.</returns>
-    [HttpGet("all")]
+    [HttpGet]
+    [Route("all")]
     [SwaggerOperation(Summary = "Get products with pagination", Description = "Retrieves products with pagination.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
@@ -49,7 +50,8 @@ public class ProductsController(IMediator mediator) : ControllerBase
     /// <param name="pageSize">The number of products per page (must be 1 or greater).</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
     /// <returns>A paged list of active products with pagination info.</returns>
-    [HttpGet("active")]
+    [HttpGet]
+    [Route("active")]
     [SwaggerOperation(Summary = "Get active products with pagination", Description = "Retrieves active products with pagination.")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<ProductDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

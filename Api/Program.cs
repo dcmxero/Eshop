@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using WebApi.Configurations;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -32,37 +33,26 @@ builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof
 // Register the controller services to handle incoming HTTP requests.
 builder.Services.AddControllers();
 
+// Register Swagger/OpenAPI services for API documentation.
+builder.Services.AddEndpointsApiExplorer();
+
 // API Versioning configuration
 builder.Services.AddApiVersioning(options =>
 {
-    // Assume default version (1.0) when the version is not specified in the request.
-    options.AssumeDefaultVersionWhenUnspecified = true;
-
-    // Set default API version to 1.0.
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-
-    // Configure API version reading from request header or query string.
-    options.ApiVersionReader = ApiVersionReader.Combine(
-        new HeaderApiVersionReader("x-api-version"),
-        new QueryStringApiVersionReader("api-version")
-    );
-
-    // Enable reporting of available API versions.
-    options.ReportApiVersions = true;
+    options.ReportApiVersions = true; // This reports the available versions in the response headers
+    options.AssumeDefaultVersionWhenUnspecified = true; // Use a default version if not specified
+    options.DefaultApiVersion = new ApiVersion(1, 0); // Set the default API version
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();// Disable query string and header-based versioning
 });
 
 // API Explorer configuration to expose versioned endpoints.
 builder.Services.AddVersionedApiExplorer(options =>
 {
-    // Define format for versioning (e.g., v1, v2).
-    options.GroupNameFormat = "'v'VVV";
+    options.GroupNameFormat = "'v'VVV";// Define format for versioning (e.g., v1, v2).
 
-    // Substitute API version in URL for versioned endpoints.
-    options.SubstituteApiVersionInUrl = true;
+    options.SubstituteApiVersionInUrl = true;// Substitute API version in URL for versioned endpoints.
 });
 
-// Register Swagger/OpenAPI services for API documentation.
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     // Define Swagger documentation for version 1 of the API.
@@ -83,6 +73,8 @@ builder.Services.AddSwaggerGen(options =>
 
     // Enable annotations for better API documentation.
     options.EnableAnnotations();
+
+    options.DocumentFilter<RemoveVersionParameters>();
 });
 
 // Clear existing logging providers and add console logging.
