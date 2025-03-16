@@ -1,15 +1,10 @@
-﻿namespace Domain.Models;
+﻿namespace Domain.Models.ProductManagement;
 
 /// <summary>
 /// Represents a product in the system.
 /// </summary>
-public class Product
+public class Product : DbEntity
 {
-    /// <summary>
-    /// Gets or sets the unique identifier for the product.
-    /// </summary>
-    public int Id { get; set; }
-
     /// <summary>
     /// Gets or sets the name of the product.
     /// </summary>
@@ -34,4 +29,14 @@ public class Product
     /// Gets or sets the active status of the product. Defaults to true.
     /// </summary>
     public bool IsActive { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the ID of the product category.
+    /// </summary>
+    public int ProductCategoryId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the associated product category.
+    /// </summary>
+    public ProductCategory? ProductCategory { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+﻿using Domain.Models.ProductManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
@@ -16,6 +16,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     /// Gets or sets the collection of products in the database.
     /// </summary>
     public DbSet<Product> Products { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of product categories in the database.
+    /// </summary>
+    public DbSet<ProductCategory> ProductCategories { get; set; }
 
     /// <summary>
     /// Configures the model for the <see cref="ApplicationDbContext"/>.

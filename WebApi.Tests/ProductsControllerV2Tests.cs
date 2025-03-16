@@ -3,7 +3,7 @@ using Application.Services;
 using DTOs.Common;
 using DTOs.Product;
 using Infrastructure;
-using Infrastructure.Repositories;
+using Infrastructure.Repositories.ProductManagement;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

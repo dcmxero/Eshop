@@ -1,8 +1,9 @@
 using Application.Features.Products;
 using Application.Services;
 using Infrastructure;
-using Infrastructure.Repositories;
+using Infrastructure.Repositories.ProductManagement;
 using Infrastructure.Seeds;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -15,6 +16,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Configure the DbContext for SQL Server using the connection string from the configuration.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register Unit of work for dependency injection.
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Register Product repository and service for dependency injection.
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -87,11 +91,21 @@ builder.Logging.AddConsole();
 
 WebApplication app = builder.Build();
 
+// Apply database migrations automatically when the application starts.
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    IServiceProvider services = scope.ServiceProvider;
+    ApplicationDbContext context = services.GetRequiredService<ApplicationDbContext>();
+
+    // Apply any pending migrations automatically.
+    context.Database.Migrate();
+}
+
 // Check if the environment is Development.
 if (app.Environment.IsDevelopment())
 {
     // Initialize product seed data in development environment.
-    ProductSeed.Initialize(app.Services);
+    DataSeed.Initialize(app.Services);
 
     // Enable Swagger and Swagger UI for API documentation.
     app.UseSwagger();
@@ -105,16 +119,6 @@ if (app.Environment.IsDevelopment())
             options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
         }
     });
-}
-
-// Apply database migrations automatically when the application starts.
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider services = scope.ServiceProvider;
-    ApplicationDbContext context = services.GetRequiredService<ApplicationDbContext>();
-
-    // Apply any pending migrations automatically.
-    context.Database.Migrate();
 }
 
 // Configure middleware to handle HTTPS redirection and authorization.
