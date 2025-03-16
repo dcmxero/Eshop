@@ -1,4 +1,6 @@
-﻿namespace Domain.Models.ProductManagement;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Models.ProductManagement;
 
 /// <summary>
 /// Represents a product in the system.
@@ -8,11 +10,13 @@ public class Product : DbEntity
     /// <summary>
     /// Gets or sets the name of the product.
     /// </summary>
+    [MaxLength(100)]
     public required string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the URI of the product image.
     /// </summary>
+    [MaxLength(100)]
     public required string ImgUri { get; set; }
 
     /// <summary>
@@ -23,6 +27,7 @@ public class Product : DbEntity
     /// <summary>
     /// Gets or sets the description of the product.
     /// </summary>
+    [MaxLength(500)]
     public string? Description { get; set; }
 
     /// <summary>
