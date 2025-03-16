@@ -8,7 +8,7 @@ namespace DTOs.Product;
 public class ProductDto
 {
     /// <summary>
-    /// Gets or sets the product ID.
+    /// Gets or sets the unique identifier of the product.
     /// </summary>
     [SwaggerSchema(Description = "The unique identifier of the product.")]
     public int Id { get; set; }
@@ -20,7 +20,7 @@ public class ProductDto
     public required string Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the image URI of the product.
+    /// Gets or sets the URI of the product image.
     /// </summary>
     [SwaggerSchema(Description = "The URI of the product image.")]
     public required string ImgUri { get; set; }
@@ -32,7 +32,7 @@ public class ProductDto
     public decimal Price { get; set; }
 
     /// <summary>
-    /// Gets or sets the description of the product.
+    /// Gets or sets the detailed description of the product.
     /// </summary>
     [SwaggerSchema(Description = "The detailed description of the product.")]
     public string? Description { get; set; }
@@ -42,4 +42,10 @@ public class ProductDto
     /// </summary>
     [SwaggerSchema(Description = "Indicates if the product is active.")]
     public bool IsActive { get; set; }
+
+    /// <summary>
+    /// Gets or sets the category of the product.
+    /// </summary>
+    [SwaggerSchema(Description = "The category to which the product belongs.")]
+    public required string ProductCategory { get; set; }
 }

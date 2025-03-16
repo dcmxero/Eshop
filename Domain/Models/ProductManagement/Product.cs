@@ -38,5 +38,5 @@ public class Product : DbEntity
     /// <summary>
     /// Gets or sets the associated product category.
     /// </summary>
-    public ProductCategory? ProductCategory { get; set; }
+    public virtual ProductCategory? ProductCategory { get; set; }
 }

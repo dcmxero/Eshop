@@ -1,5 +1,4 @@
-﻿using Application.Mappers;
-using DTOs.Common;
+﻿using DTOs.Common;
 using DTOs.Product;
 
 namespace Application.Services;
@@ -7,14 +6,14 @@ namespace Application.Services;
 public class MockProductService : IProductService
 {
     private readonly List<ProductDto> products =
-[
-    new ProductDto { Id = 1, Name = "Product 1", ImgUri = "product1.jpg", Price = 10.99M, IsActive = true },
-    new ProductDto { Id = 2, Name = "Product 2", ImgUri = "product2.jpg", Price = 12.99M, IsActive = false },
-    new ProductDto { Id = 3, Name = "Product 3", ImgUri = "product3.jpg", Price = 14.99M, IsActive = true },
-    new ProductDto { Id = 4, Name = "Product 4", ImgUri = "product4.jpg", Price = 16.99M, IsActive = true },
-    new ProductDto { Id = 5, Name = "Product 5", ImgUri = "product5.jpg", Price = 18.99M, IsActive = false },
-    new ProductDto { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true }
-];
+    [
+        new ProductDto { Id = 1, Name = "Product 1", ImgUri = "product1.jpg", Price = 10.99M, IsActive = true, ProductCategory = "Test category" },
+        new ProductDto { Id = 2, Name = "Product 2", ImgUri = "product2.jpg", Price = 12.99M, IsActive = false, ProductCategory = "Test category" },
+        new ProductDto { Id = 3, Name = "Product 3", ImgUri = "product3.jpg", Price = 14.99M, IsActive = true, ProductCategory = "Test category" },
+        new ProductDto { Id = 4, Name = "Product 4", ImgUri = "product4.jpg", Price = 16.99M, IsActive = true, ProductCategory = "Test category" },
+        new ProductDto { Id = 5, Name = "Product 5", ImgUri = "product5.jpg", Price = 18.99M, IsActive = false, ProductCategory = "Test category" },
+        new ProductDto { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true, ProductCategory = "Test category" }
+    ];
 
     public Task<List<ProductDto>> GetAllProductsAsync(CancellationToken cancellationToken = default)
     {
@@ -65,5 +64,5 @@ public class MockProductService : IProductService
 
         product.IsActive = isActive;
         return Task.FromResult(true);
-    }    
+    }
 }

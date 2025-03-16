@@ -14,4 +14,9 @@ public class ProductCategory : DbEntity
     /// Gets or sets the description of the product category.
     /// </summary>
     public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of products associated with the product category.
+    /// </summary>
+    public ICollection<Product> Products { get; set; } = [];
 }

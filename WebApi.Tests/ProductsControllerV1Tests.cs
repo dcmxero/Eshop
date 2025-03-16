@@ -39,8 +39,8 @@ public class ProductsControllerV1Tests
         // Arrange: Prepare a list of product DTOs to be returned by the mock service.
         List<ProductDto> products =
         [
-            new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1" },
-            new() { Id = 2, Name = "Product 2", ImgUri = "image2.jpg", Price = 19.99M, Description = "Description 2" }
+            new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1", ProductCategory = "Test category" },
+            new() { Id = 2, Name = "Product 2", ImgUri = "image2.jpg", Price = 19.99M, Description = "Description 2", ProductCategory = "Test category" }
         ];
         mockProductService.Setup(service => service.GetAllProductsAsync(default)).ReturnsAsync(products);
 
@@ -63,8 +63,8 @@ public class ProductsControllerV1Tests
         // Arrange: Prepare a list of active products to be returned by the mock service.
         List<ProductDto> activeProducts =
         [
-            new() { Id = 1, Name = "Product 1", ImgUri = "active1.jpg", Price = 15.99M, Description = "Description 1" },
-            new() { Id = 2, Name = "Product 2", ImgUri = "active2.jpg", Price = 25.99M, Description = "Description 2" }
+            new() { Id = 1, Name = "Product 1", ImgUri = "active1.jpg", Price = 15.99M, Description = "Description 1", ProductCategory = "Test category" },
+            new() { Id = 2, Name = "Product 2", ImgUri = "active2.jpg", Price = 25.99M, Description = "Description 2", ProductCategory = "Test category" }
         ];
 
         // Mock service to return only the active products.
@@ -93,7 +93,7 @@ public class ProductsControllerV1Tests
     public async Task GetProductById_ReturnsOkResult_WhenProductExists()
     {
         // Arrange: Prepare the product DTO to be returned by the mock service.
-        ProductDto productDto = new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1" };
+        ProductDto productDto = new() { Id = 1, Name = "Product 1", ImgUri = "image1.jpg", Price = 9.99M, Description = "Description 1", ProductCategory = "Test category" };
         mockProductService.Setup(service => service.GetProductByIdAsync(1, default)).ReturnsAsync(productDto);
 
         // Act: Call the GetProductById method on the controller.

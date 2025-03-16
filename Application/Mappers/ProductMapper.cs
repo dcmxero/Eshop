@@ -22,7 +22,8 @@ public static class ProductMapper
             ImgUri = product.ImgUri,
             Price = product.Price,
             Description = product.Description,
-            IsActive = product.IsActive
+            IsActive = product.IsActive,
+            ProductCategory = product.ProductCategory?.Name ?? ""
         };
     }
 
@@ -31,16 +32,16 @@ public static class ProductMapper
     /// </summary>
     /// <param name="productDto">The product DTO to be converted.</param>
     /// <returns>A <see cref="Product"/> domain model containing the data from the provided <see cref="ProductDto"/>.</returns>
-    //public static Product ToDomain(this ProductDto productDto)
-    //{
-    //    return new Product
-    //    {
-    //        Id = productDto.Id,
-    //        Name = productDto.Name,
-    //        ImgUri = productDto.ImgUri,
-    //        Price = productDto.Price,
-    //        Description = productDto.Description,
-    //        IsActive = productDto.IsActive
-    //    };
-    //}
+    public static Product ToDomain(this ProductDto productDto)
+    {
+        return new Product
+        {
+            Id = productDto.Id,
+            Name = productDto.Name,
+            ImgUri = productDto.ImgUri,
+            Price = productDto.Price,
+            Description = productDto.Description,
+            IsActive = productDto.IsActive,
+        };
+    }
 }

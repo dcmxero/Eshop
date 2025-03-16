@@ -18,6 +18,7 @@ public class ProductService(IProductRepository productRepository,
     {
         List<Product> products = await productRepository
             .GetAll()
+            .Include(p => p.ProductCategory)
             .ToListAsync(cancellationToken);
         return [.. products.Select(ProductMapper.ToDto)];
     }
@@ -27,6 +28,7 @@ public class ProductService(IProductRepository productRepository,
         List<Product> products = await productRepository
             .GetAll()
             .Where(x => x.IsActive)
+            .Include(p => p.ProductCategory)
             .ToListAsync(cancellationToken);
         return [.. products.Select(ProductMapper.ToDto)];
     }
@@ -42,14 +44,17 @@ public class ProductService(IProductRepository productRepository,
     public async Task<PaginatedList<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         // Get the paginated products from the database
-        List<Product> products = await productRepository.GetAll()
+        List<Product> products = await productRepository
+            .GetAll()
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Include(p => p.ProductCategory)
             .ToListAsync(cancellationToken);
 
         // Get the total count of products
         int totalCount = await productRepository
             .GetAll()
+            .Include(p => p.ProductCategory)
             .CountAsync(cancellationToken);
 
         return new PaginatedList<ProductDto>([.. products.Select(ProductMapper.ToDto)], totalCount, page, pageSize);
@@ -58,16 +63,19 @@ public class ProductService(IProductRepository productRepository,
     public async Task<PaginatedList<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         // Get the paginated products from the database
-        List<Product> products = await productRepository.GetAll()
+        List<Product> products = await productRepository
+            .GetAll()
             .Where(x => x.IsActive)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Include(p => p.ProductCategory)
             .ToListAsync(cancellationToken);
 
         // Get the total count of products
         int totalCount = await productRepository
             .GetAll()
             .Where(x => x.IsActive)
+            .Include(p => p.ProductCategory)
             .CountAsync(cancellationToken);
 
         return new PaginatedList<ProductDto>([.. products.Select(ProductMapper.ToDto)], totalCount, page, pageSize);
@@ -95,7 +103,6 @@ public class ProductService(IProductRepository productRepository,
             throw new Exception("An error occurred while updating the product description.", ex);
         }
     }
-
 
     public async Task<bool> SetIsActiveAsync(int productId, bool isActive, CancellationToken cancellationToken = default)
     {
