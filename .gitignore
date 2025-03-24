@@ -5,7 +5,7 @@
 *.suo 
 *.userprefs 
 [Dd]ebug/ 
-[Dd]ebugPublic/ 
+[Dd]DebugPublic/ 
 [Dd]Release/ 
 [Dd]ReleasePublic/ 
 x64/ 
@@ -13,3 +13,4 @@ x86/
 [Aa]rm/ 
 [Aa]rm64/ 
 Archive/ 
+**/obj/

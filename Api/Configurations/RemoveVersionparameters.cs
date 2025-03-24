@@ -1,24 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace WebApi.Configurations;
 
-public class RemoveVersionParameters : IOperationFilter
+public class RemoveVersionParameters : IDocumentFilter
 {
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        // Only remove version parameters from the documentation, not from the actual API calls
-        if (context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<ApiVersionAttribute>().Any())
+        // Loop through the paths and remove any version parameter from the paths
+        foreach (KeyValuePair<string, OpenApiPathItem> path in swaggerDoc.Paths)
         {
-            // Remove version parameters from query, header, or path if it's present in documentation
-            List<OpenApiParameter> versionParameters = [.. operation.Parameters.Where(p => p.Name == "version"
-                                                                   || p.Name == "api-version"
-                                                                   || p.Name == "x-api-version")];
+            IDictionary<OperationType, OpenApiOperation> operations = path.Value.Operations;
 
-            foreach (OpenApiParameter? versionParam in versionParameters)
+            foreach (KeyValuePair<OperationType, OpenApiOperation> operation in operations)
             {
-                operation.Parameters.Remove(versionParam);
+                List<OpenApiParameter> parametersToRemove = [];
+
+                foreach (OpenApiParameter? parameter in operation.Value.Parameters)
+                {
+                    // Remove the api-version and x-api-version parameters
+                    if (parameter.Name == "api-version" || parameter.Name == "x-api-version")
+                    {
+                        parametersToRemove.Add(parameter);
+                    }
+                }
+
+                // Remove them after iterating
+                foreach (OpenApiParameter parameter in parametersToRemove)
+                {
+                    operation.Value.Parameters.Remove(parameter);
+                }
             }
         }
     }

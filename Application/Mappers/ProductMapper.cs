@@ -1,5 +1,5 @@
-﻿using Application.DTOs;
-using Domain.Models;
+﻿using Domain.Models.ProductManagement;
+using DTOs.Product;
 
 namespace Application.Mappers;
 
@@ -22,7 +22,8 @@ public static class ProductMapper
             ImgUri = product.ImgUri,
             Price = product.Price,
             Description = product.Description,
-            IsActive = product.IsActive
+            IsActive = product.IsActive,
+            ProductCategory = product.ProductCategory?.Name ?? ""
         };
     }
 
@@ -40,7 +41,7 @@ public static class ProductMapper
             ImgUri = productDto.ImgUri,
             Price = productDto.Price,
             Description = productDto.Description,
-            IsActive = productDto.IsActive
+            IsActive = productDto.IsActive,
         };
     }
 }

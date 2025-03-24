@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 
-namespace Application.DTOs;
+namespace DTOs.Product;
 
 /// <summary>
 /// Represents the data transfer object (DTO) for updating a product.
@@ -11,5 +11,5 @@ public class UpdateProductDto
     /// Gets or sets the updated description of the product.
     /// </summary>
     [SwaggerSchema(Description = "The updated description of the product.")]
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 }

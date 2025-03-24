@@ -1,66 +1,68 @@
-﻿namespace Application.Services;
+﻿using DTOs.Common;
+using DTOs.Product;
 
-using Application.DTOs;
-using Infrastructure.Exceptions;
+namespace Application.Services;
 
 public class MockProductService : IProductService
 {
     private readonly List<ProductDto> products =
-[
-    new ProductDto { Id = 1, Name = "Product 1", ImgUri = "product1.jpg", Price = 10.99M, IsActive = true },
-    new ProductDto { Id = 2, Name = "Product 2", ImgUri = "product2.jpg", Price = 12.99M, IsActive = false },
-    new ProductDto { Id = 3, Name = "Product 3", ImgUri = "product3.jpg", Price = 14.99M, IsActive = true },
-    new ProductDto { Id = 4, Name = "Product 4", ImgUri = "product4.jpg", Price = 16.99M, IsActive = true },
-    new ProductDto { Id = 5, Name = "Product 5", ImgUri = "product5.jpg", Price = 18.99M, IsActive = false },
-    new ProductDto { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true }
-];
+    [
+        new ProductDto { Id = 1, Name = "Product 1", ImgUri = "product1.jpg", Price = 10.99M, IsActive = true, ProductCategory = "Test category" },
+        new ProductDto { Id = 2, Name = "Product 2", ImgUri = "product2.jpg", Price = 12.99M, IsActive = false, ProductCategory = "Test category" },
+        new ProductDto { Id = 3, Name = "Product 3", ImgUri = "product3.jpg", Price = 14.99M, IsActive = true, ProductCategory = "Test category" },
+        new ProductDto { Id = 4, Name = "Product 4", ImgUri = "product4.jpg", Price = 16.99M, IsActive = true, ProductCategory = "Test category" },
+        new ProductDto { Id = 5, Name = "Product 5", ImgUri = "product5.jpg", Price = 18.99M, IsActive = false, ProductCategory = "Test category" },
+        new ProductDto { Id = 6, Name = "Product 6", ImgUri = "product6.jpg", Price = 20.99M, IsActive = true, ProductCategory = "Test category" }
+    ];
 
-    public Task<List<ProductDto>> GetAllProductsAsync()
+    public Task<List<ProductDto>> GetAllProductsAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products);
     }
 
-    public Task<List<ProductDto>> GetAllActiveProductsAsync()
+    public Task<List<ProductDto>> GetAllActiveProductsAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(products.Where(p => p.IsActive).ToList());
     }
 
-    public Task<ProductDto> GetProductByIdAsync(int id)
+    public Task<ProductDto?> GetProductByIdAsync(int productId, CancellationToken cancellationToken = default)
     {
-        ProductDto? product = products.FirstOrDefault(p => p.Id == id);
-        return product == null ? throw new ProductNotFoundException() : Task.FromResult(product);
+        return Task.FromResult(products.FirstOrDefault(p => p.Id == productId));
     }
 
-    public Task<List<ProductDto>> GetProductsAsync(int page, int pageSize)
+    public Task<PaginatedList<ProductDto>> GetProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(products.Skip((page - 1) * pageSize).Take(pageSize).ToList());
+        return Task.FromResult(new PaginatedList<ProductDto>([.. products.Skip((page - 1) * pageSize).Take(pageSize)], products.Count, page, pageSize));
     }
 
-    public Task<List<ProductDto>> GetActiveProductsAsync(int page, int pageSize)
+    public Task<PaginatedList<ProductDto>> GetActiveProductsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(products.Where(p => p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ToList());
+        return Task.FromResult(new PaginatedList<ProductDto>([.. products.Where(p => p.IsActive).Skip((page - 1) * pageSize).Take(pageSize)], products.Count, page, pageSize));
     }
 
-    public Task UpdateProductDescriptionAsync(int productId, string? description)
+    public Task<bool> UpdateProductDescriptionAsync(int productId, string? description, CancellationToken cancellationToken = default)
     {
         ProductDto? product = products.FirstOrDefault(p => p.Id == productId);
 
-        if (product != null)
+        if (product == null)
         {
-            product.Description = description;
-            return Task.CompletedTask;
+            return Task.FromResult(false);
         }
 
-        return Task.CompletedTask;
+        product.Description = description;
+        return Task.FromResult(true);
     }
 
-    public Task SetIsActiveAsync(int productId, bool isActive)
+    public Task<bool> SetIsActiveAsync(int productId, bool isActive, CancellationToken cancellationToken = default)
     {
         ProductDto? product = products.FirstOrDefault(p => p.Id == productId);
-        if (product != null)
+
+        if (product == null)
         {
-            product.IsActive = isActive;
+            return Task.FromResult(false);
         }
-        return Task.CompletedTask;
+
+        product.IsActive = isActive;
+        return Task.FromResult(true);
     }
 }
