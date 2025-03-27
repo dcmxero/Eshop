@@ -1,6 +1,8 @@
-﻿namespace Infrastructure.Repositories;
+﻿using Domain;
 
-public class GenericRepository<TEntity>(ApplicationDbContext context) where TEntity : class
+namespace Infrastructure.Repositories;
+
+public class GenericRepository<TEntity>(ApplicationDbContext context) where TEntity : DbEntity
 {
     protected readonly ApplicationDbContext context = context;
 
