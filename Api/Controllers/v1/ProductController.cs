@@ -10,8 +10,6 @@ namespace WebApi.Controllers.v1;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class ProductsController(IProductService productService) : ControllerBase
 {
-    private readonly IProductService productService = productService;
-
     /// <summary>
     /// Retrieves all products.
     /// </summary>

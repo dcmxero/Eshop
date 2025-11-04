@@ -8,12 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
 
-public class ProductService(IProductRepository productRepository,
+public class ProductService(
+    IProductRepository productRepository,
     IUnitOfWork unitOfWork) : IProductService
 {
-    private readonly IProductRepository productRepository = productRepository;
-    private readonly IUnitOfWork unitOfWork = unitOfWork;
-
     public async Task<List<ProductDto>> GetAllProductsAsync(CancellationToken cancellationToken = default)
     {
         List<Product> products = await productRepository

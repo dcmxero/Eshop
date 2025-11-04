@@ -12,8 +12,6 @@ namespace WebApi.Controllers.v2;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class ProductsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator = mediator;
-
     /// <summary>
     /// Retrieves products with pagination.
     /// </summary>
