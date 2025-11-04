@@ -1,16 +1,32 @@
-.vs/ 
-.vscode/ 
-.idea/ 
-*.user 
-*.suo 
-*.userprefs 
-[Dd]ebug/ 
-[Dd]DebugPublic/ 
-[Dd]Release/ 
-[Dd]ReleasePublic/ 
-x64/ 
-x86/ 
-[Aa]rm/ 
-[Aa]rm64/ 
-Archive/ 
-**/obj/
+# IDEs
+.vs/
+.vscode/
+.idea/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleasePublic/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+Archive/
+bin/
+obj/
+
+# NuGet artifacts
+*.nuget.cache
+*.nuget.g.props
+*.nuget.dgspec.json
+project.assets.json
+
+# Others
+*.log
+*.tmp
